@@ -10,6 +10,13 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
+// 验证环境变量
+if (!process.env.DEEPSEEK_API_KEY) {
+  console.error('错误: 未设置 DEEPSEEK_API_KEY 环境变量');
+  console.error('请复制 .env.example 到 .env 并设置你的 API 密钥');
+  process.exit(1);
+}
+
 const DEEPSEEK_API_KEY = process.env.DEEPSEEK_API_KEY;
 
 // 创建 axios 实例
@@ -28,14 +35,14 @@ deepseekApi.interceptors.response.use(
   response => response,
   async error => {
     if (error.response) {
-      // API 响应错误
       console.error('API Error Response:', {
         status: error.response.status,
         data: error.response.data
       });
       
       if (error.response.status === 401) {
-        throw new Error('API 密钥无效或已过期，请检查 API 密钥设置');
+        console.error('API 密钥无效或已过期，请检查 .env 文件中的 DEEPSEEK_API_KEY 设置');
+        throw new Error('API 密钥无效或已过期，请联系管理员');
       }
     } else if (error.code === 'ECONNRESET') {
       console.error('连接被重置，可能是网络问题');
