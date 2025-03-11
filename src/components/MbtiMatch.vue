@@ -132,6 +132,8 @@
 
 <script setup lang="ts">
 import { ref, computed } from 'vue'
+import axios from 'axios'
+import { ElLoading, ElMessage } from 'element-plus'
 import 'animate.css'
 
 interface PersonType {
@@ -158,6 +160,7 @@ const person2 = ref<PersonType>({
 const showResult = ref(false)
 const matchPercentage = ref(0)
 const matchDescription = ref('')
+const isLoading = ref(false)
 
 const isSelectionComplete = computed(() => {
   return Object.values(person1.value).every(v => v !== '') &&
@@ -168,11 +171,33 @@ const getFullType = (person: PersonType) => {
   return person.EI + person.SN + person.TF + person.JP
 }
 
-const calculateMatch = () => {
-  // 这里添加匹配度计算逻辑
-  showResult.value = true
-  matchPercentage.value = 85 // 示例匹配度
-  matchDescription.value = '你们的性格非常互补！在沟通方式和决策过程中能够相互理解和支持。'
+const calculateMatch = async () => {
+  const loadingInstance = ElLoading.service({
+    lock: true,
+    text: '正在分析性格匹配度...',
+    background: 'rgba(255, 255, 255, 0.7)'
+  })
+  
+  try {
+    const type1 = getFullType(person1.value)
+    const type2 = getFullType(person2.value)
+    
+    const response = await axios.post('/api/mbti-match', {
+      type1,
+      type2
+    })
+    
+    const { matchPercentageValue, description } = response.data
+    
+    showResult.value = true
+    matchPercentage.value = matchPercentageValue
+    matchDescription.value = description
+  } catch (error) {
+    ElMessage.error('抱歉，分析过程出现错误，请稍后重试')
+    console.error('Error:', error)
+  } finally {
+    loadingInstance.close()
+  }
 }
 
 const resetSelection = () => {
