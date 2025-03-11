@@ -10,11 +10,26 @@
 ## 项目描述
 AiMatch 是一个基于 MBTI 性格理论的 Web 应用程序，用于计算和展示两个人的性格匹配度。应用采用 Vue 3 开发，提供左右对分的界面布局，每边包含 MBTI 四组性格维度的选择按钮（内向/外向、感觉/直觉、思维/感觉、判断/知觉），选择完成后调用Ai大模型进行分析，通过动画展示两人的性格匹配结果。
 
-## 安全注意事项
+## 启动服务：
+```bash
+# 启动后端服务
+# 确保没有遗留的 Node.js 进程：
+taskkill /F /IM node.exe
+# 先启动后端服务：
+cd server; npm run dev
+# 启动前端服务（新终端）：
+cd ..
+npm run dev
+```
 
-- 不要将 `.env` 文件提交到代码仓库
-- 保护好你的 API 密钥
-- 在生产环境中使用更安全的密钥管理方式
+## 使用方法
+项目的前后端服务都已启动：
+后端服务运行在 http://localhost:3000
+前端服务运行在 http://localhost:5173
+你现在可以：
+在浏览器中访问 http://localhost:5173 来使用应用
+选择两个 MBTI 性格类型进行匹配分析
+点击"开始匹配"按钮查看分析结果
 
 ## 环境要求
 
@@ -43,26 +58,7 @@ npm install
 cp server/.env.example server/.env
 ```
 
-4. 启动服务：
-```bash
-# 启动后端服务
-# 确保没有遗留的 Node.js 进程：
-taskkill /F /IM node.exe
-# 先启动后端服务：
-cd server; npm run dev
-# 启动前端服务（新终端）：
-cd ..
-npm run dev
-```
 
-5.使用方法
-项目的前后端服务都已启动：
-后端服务运行在 http://localhost:3000
-前端服务运行在 http://localhost:5173
-你现在可以：
-在浏览器中访问 http://localhost:5173 来使用应用
-选择两个 MBTI 性格类型进行匹配分析
-点击"开始匹配"按钮查看分析结果
 
 
 
