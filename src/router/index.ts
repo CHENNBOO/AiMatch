@@ -9,8 +9,7 @@ import VirtualInteraction from '../components/VirtualInteraction.vue'
 const routes = [
   {
     path: '/',
-    name: '欢迎',
-    component: Welcome
+    redirect: '/mbti'
   },
   {
     path: '/mbti',
