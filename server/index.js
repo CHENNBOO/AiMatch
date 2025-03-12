@@ -186,6 +186,95 @@ app.post('/api/mbti-match', async (req, res) => {
   }
 });
 
+app.post('/api/event-plan', async (req, res) => {
+  try {
+    const { person1Type, person2Type, eventType, preferences } = req.body;
+    
+    // 构建提示词
+    const prompt = `作为一个MBTI性格专家和活动策划师，请为一对性格类型分别为${person1Type}和${person2Type}的伴侣策划一次${
+      eventType === 'date' ? '约会' : 
+      eventType === 'travel' ? '旅行' : '日常活动'
+    }。
+
+考虑到以下偏好：
+- 预算范围：${preferences.budget === 'low' ? '经济实惠 (¥0-300)' : 
+            preferences.budget === 'medium' ? '中等消费 (¥300-800)' : '高端体验 (¥800+)'}
+- 活动时长：${preferences.duration === 'short' ? '2-3小时' : 
+            preferences.duration === 'half_day' ? '半天' : 
+            preferences.duration === 'full_day' ? '一整天' : '多天'}
+- 活动场景：${preferences.scene.join('、')}
+
+请按照以下格式输出活动方案：
+
+方案概述：
+[简要描述这个活动方案的整体设计思路，以及如何契合双方的性格特点]
+
+具体安排：
+[详细的时间安排，每个环节的具体活动内容]
+
+贴心建议：
+[根据双方的性格特点，给出一些具体的建议，帮助活动顺利进行]
+
+请确保建议具体实用，充分考虑两种性格类型的特点和偏好。`;
+
+    console.log('开始调用 API...');
+    
+    const response = await deepseekApi.post('/chat/completions', {
+      model: "deepseek-chat",
+      messages: [
+        {
+          role: "user",
+          content: prompt
+        }
+      ],
+      temperature: 0.7,
+      max_tokens: 1500
+    });
+
+    console.log('API 调用成功');
+    
+    // 解析响应内容
+    const content = response.data.choices[0].message.content;
+    
+    // 提取各个部分
+    const overviewMatch = content.match(/方案概述：\n([\s\S]*?)(?=\n\n具体安排：)/);
+    const activitiesMatch = content.match(/具体安排：\n([\s\S]*?)(?=\n\n贴心建议：)/);
+    const tipsMatch = content.match(/贴心建议：\n([\s\S]*?)$/);
+
+    // 处理活动安排
+    const activitiesText = activitiesMatch ? activitiesMatch[1] : '';
+    const activities = activitiesText.split('\n')
+      .filter(line => line.trim())
+      .map(line => {
+        const [time, ...rest] = line.split('：');
+        const [title, description] = rest.join('：').split('，');
+        return {
+          time: time.trim(),
+          title: title ? title.trim() : '',
+          description: description ? description.trim() : ''
+        };
+      });
+
+    // 处理建议
+    const tips = tipsMatch ? tipsMatch[1]
+      .split('\n')
+      .filter(line => line.trim())
+      .map(line => line.replace(/^[•-]\s*/, '').trim()) : [];
+
+    res.json({
+      overview: overviewMatch ? overviewMatch[1].trim() : '',
+      activities,
+      tips
+    });
+  } catch (error) {
+    console.error('Error:', error);
+    res.status(500).json({ 
+      error: error.message || '生成活动方案时出现错误，请稍后重试',
+      details: error.response?.data || error.message 
+    });
+  }
+});
+
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
   console.log(`Server is running on port ${PORT}`);

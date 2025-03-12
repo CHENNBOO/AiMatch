@@ -11,8 +11,13 @@
         :collapse="isCollapsed"
         @select="handleSelect"
         :router="true">
-        <el-menu-item index="/mbti">
-          <template #title>MBTI性格匹配测试</template>
+        <el-menu-item index="/">
+          <el-icon><UserFilled /></el-icon>
+          <template #title>MBTI匹配</template>
+        </el-menu-item>
+        <el-menu-item index="/event-planner">
+          <el-icon><Calendar /></el-icon>
+          <template #title>事件策划Agent</template>
         </el-menu-item>
         <el-menu-item index="/coming-soon" disabled>
           <el-icon><More /></el-icon>
@@ -41,7 +46,7 @@
 <script setup lang="ts">
 import { ref } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
-import { More, Expand, Fold } from '@element-plus/icons-vue'
+import { UserFilled, Calendar, Expand, Fold } from '@element-plus/icons-vue'
 
 const router = useRouter()
 const route = useRoute()
@@ -150,6 +155,13 @@ body {
 .main-content {
   flex: 1;
   background-color: #f5f7fa;
+  padding: 20px;
+  margin-left: 50px;
+  transition: margin-left 0.3s;
+}
+
+.sidebar.collapsed + .main-content {
+  margin-left: 50px;
 }
 
 .fade-enter-active,
