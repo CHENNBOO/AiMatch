@@ -54,75 +54,112 @@ deepseekApi.interceptors.response.use(
   }
 );
 
-// // MBTI 性格类型匹配规则
-// const getMbtiCompatibility = (type1, type2) => {
-//   // 计算共同特质数量
-//   let commonTraits = 0;
-//   for (let i = 0; i < 4; i++) {
-//     if (type1[i] === type2[i]) {
-//       commonTraits++;
-//     }
-//   }
+// MBTI类型特征数据
+const mbtiTraits = {
+  ISTJ: { focus: '细节和规律', stress: '突发变化和不确定性', strength: '组织能力和责任心' },
+  ISFJ: { focus: '他人需求和传统', stress: '冲突和过度期望', strength: '同理心和可靠性' },
+  INFJ: { focus: '意义和理想', stress: '人际冲突和价值观挑战', strength: '洞察力和创造力' },
+  INTJ: { focus: '系统和改进', stress: '无能和混乱', strength: '战略思维和独立性' },
+  ISTP: { focus: '实践和效率', stress: '情感压力和约束', strength: '适应力和问题解决能力' },
+  ISFP: { focus: '和谐和自由', stress: '批评和时间压力', strength: '审美能力和灵活性' },
+  INFP: { focus: '个人价值和创造', stress: '批评和冲突', strength: '创造力和同理心' },
+  INTP: { focus: '概念和分析', stress: '情感压力和期限', strength: '逻辑思维和创新能力' },
+  ESTP: { focus: '行动和冒险', stress: '规则限制和单调', strength: '果断力和适应能力' },
+  ESFP: { focus: '体验和享受', stress: '长期规划和限制', strength: '社交能力和乐观性' },
+  ENFP: { focus: '可能性和创新', stress: '细节和常规', strength: '热情和创造力' },
+  ENTP: { focus: '创新和辩论', stress: '规则和重复', strength: '创新能力和适应性' },
+  ESTJ: { focus: '秩序和效率', stress: '不确定性和失控', strength: '组织能力和决断力' },
+  ESFJ: { focus: '和谐和服务', stress: '冲突和否定', strength: '人际关系和责任心' },
+  ENFJ: { focus: '发展和激励', stress: '批评和冲突', strength: '领导力和同理心' },
+  ENTJ: { focus: '目标和效率', stress: '无能和失控', strength: '领导力和战略思维' }
+}
 
-//   // 基础匹配度计算
-//   let basePercentage = commonTraits * 15 + 40; // 40% 基础分 + 每个相同特质 15%
+// 压力等级描述
+const stressLevels = {
+  0: '当前压力水平较低，心理状态良好',
+  25: '存在轻度压力，但在可控范围内',
+  50: '中等程度的压力，需要适当关注',
+  75: '压力水平较高，建议采取缓解措施',
+  100: '压力水平严重，强烈建议寻求专业帮助'
+}
 
-//   // 特殊匹配规则
-//   const isOppositeEI = type1[0] !== type2[0]; // E/I 相反
-//   const hasSameNS = type1[1] === type2[1]; // N/S 相同
-//   const hasSameTF = type1[2] === type2[2]; // T/F 相同
-//   const hasSameJP = type1[3] === type2[3]; // J/P 相同
+// 心情评分描述
+const moodDescriptions = {
+  1: '心情低落，可能需要更多关注和支持',
+  2: '心情一般，有改善空间',
+  3: '心情尚可，保持平和状态',
+  4: '心情不错，保持积极心态',
+  5: '心情很好，继续保持乐观态度'
+}
 
-//   // 调整匹配度
-//   if (isOppositeEI) basePercentage += 10; // E/I 互补加分
-//   if (hasSameNS) basePercentage += 5; // N/S 相同小幅加分
-//   if (hasSameTF) basePercentage += 5; // T/F 相同小幅加分
-  
-//   // 确保匹配度在合理范围内
-//   return Math.min(Math.max(basePercentage, 30), 98);
-// };
+// 心理健康分析路由
+app.post('/api/mental-health-analysis', async (req, res) => {
+  try {
+    const { mbtiType, moodRating, stressLevel, symptoms } = req.body
 
-// // 生成匹配描述
-// const generateDescription = (type1, type2, matchPercentage) => {
-//   const isHighMatch = matchPercentage >= 80;
-//   const isMediumMatch = matchPercentage >= 60 && matchPercentage < 80;
-//   const isLowMatch = matchPercentage < 60;
+    // 获取MBTI特征
+    const traits = mbtiTraits[mbtiType]
+    const stressDesc = stressLevels[stressLevel]
+    const moodDesc = moodDescriptions[moodRating]
 
-//   let description = `${type1}和${type2}的性格匹配分析：\n\n`;
-//   description += `总体匹配度：${matchPercentage}%\n\n`;
+    // 构建提示信息
+    const prompt = `作为一个专业的心理健康顾问，请基于以下信息为用户提供全面的心理健康分析和建议：
 
-//   // 沟通方式分析
-//   if (type1[0] !== type2[0]) {
-//     description += "沟通方式：一个内向一个外向，能够在社交活动中互相平衡。外向的一方可以帮助内向的一方更好地社交，而内向的一方则能给外向的一方带来深度的交流。\n\n";
-//   } else {
-//     description += "沟通方式：具有相似的社交倾向，容易产生共鸣，但可能会强化彼此的特点。\n\n";
-//   }
+1. MBTI类型：${mbtiType}
+- 关注重点：${traits.focus}
+- 压力源：${traits.stress}
+- 优势：${traits.strength}
 
-//   // 共同价值观分析
-//   if (type1[1] === type2[1] && type1[2] === type2[2]) {
-//     description += "共同价值观：在认知方式和决策方式上都比较一致，这有助于减少分歧和冲突。\n\n";
-//   } else {
-//     description += "共同价值观：在某些方面可能存在认知差异，需要更多的相互理解和包容。\n\n";
-//   }
+2. 当前状态：
+- 心情评分：${moodRating}/5 (${moodDesc})
+- 压力水平：${stressLevel}/100 (${stressDesc})
+- 症状：${symptoms.join('、')}
 
-//   // 可能存在的挑战
-//   description += "可能存在的挑战：\n";
-//   if (type1[3] !== type2[3]) {
-//     description += "- 在生活方式的规划性和灵活性上可能存在分歧\n";
-//   }
-//   if (type1[2] !== type2[2]) {
-//     description += "- 在做决定时可能会采用不同的标准和考虑因素\n";
-//   }
-//   description += "\n";
+请提供以下格式的分析：
 
-//   // 改善建议
-//   description += "改善建议：\n";
-//   description += "1. 保持开放和理解的态度，欣赏彼此的不同\n";
-//   description += "2. 在做重要决定时，多听取对方的想法和感受\n";
-//   description += "3. 建立有效的沟通机制，及时表达自己的需求和顾虑\n";
+1. 总体评估：[简要总结当前心理状态]
+2. 个性化见解：[基于MBTI类型的分析]
+3. 建议：
+   - 日常建议：[具体可行的日常调节方法]
+   - 压力管理：[针对性的压力管理技巧]
+   - 专业帮助：[必要时的专业帮助建议]
 
-//   return description;
-// };
+请用中文回答，语气温和专业，建议具体可行。`
+
+    console.log('开始调用 Deepseek API...');
+    
+    const response = await deepseekApi.post('/chat/completions', {
+      model: "deepseek-chat",
+      messages: [
+        {
+          role: "user",
+          content: prompt
+        }
+      ],
+      temperature: 0.7,
+      max_tokens: 1500
+    });
+
+    console.log('API 调用成功');
+   
+
+    // 解析AI响应
+    const content = response.data.choices[0].message.content;
+    console.log('API返回内容:', content);
+
+    // 直接返回原始内容
+    res.json({
+      status: 'success',
+      data: content
+    });
+  } catch (error) {
+    console.error('Error generating mental health analysis:', error)
+    res.status(500).json({ 
+      error: error.message || '生成分析报告时出现错误，请稍后重试',
+      details: error.response?.data || error.message 
+    })
+  }
+})
 
 app.post('/api/mbti-match', async (req, res) => {
   try {

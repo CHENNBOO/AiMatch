@@ -2,6 +2,7 @@ import { createRouter, createWebHistory } from 'vue-router'
 import Welcome from '../components/Welcome.vue'
 import MbtiMatch from '../components/MbtiMatch.vue'
 import EventPlanner from '../components/EventPlanner.vue'
+import MentalHealth from '../components/MentalHealth.vue'
 
 const routes = [
   {
@@ -18,6 +19,11 @@ const routes = [
     path: '/event-planner',
     name: 'event-planner',
     component: EventPlanner
+  },
+  {
+    path: '/mental-health',
+    name: 'MentalHealth',
+    component: MentalHealth
   }
 ]
 
