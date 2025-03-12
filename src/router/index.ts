@@ -3,6 +3,7 @@ import Welcome from '../components/Welcome.vue'
 import MbtiMatch from '../components/MbtiMatch.vue'
 import EventPlanner from '../components/EventPlanner.vue'
 import MentalHealth from '../components/MentalHealth.vue'
+import CommunicationGuide from '../components/CommunicationGuide.vue'
 
 const routes = [
   {
@@ -24,6 +25,11 @@ const routes = [
     path: '/mental-health',
     name: 'MentalHealth',
     component: MentalHealth
+  },
+  {
+    path: '/communication-guide',
+    name: 'communication-guide',
+    component: CommunicationGuide
   }
 ]
 

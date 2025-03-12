@@ -21,7 +21,11 @@
         </el-menu-item>
         <el-menu-item index="/mental-health">
           <el-icon><Monitor /></el-icon>
-          <template #title>心理健康监测</template>
+          <span>心理健康</span>
+        </el-menu-item>
+        <el-menu-item index="/communication-guide">
+          <el-icon><ChatDotRound /></el-icon>
+          <span>沟通指导</span>
         </el-menu-item>
         <el-menu-item index="/coming-soon" disabled>
           <el-icon><More /></el-icon>
@@ -50,7 +54,7 @@
 <script setup lang="ts">
 import { ref } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
-import { UserFilled, Calendar, Monitor, More, Expand, Fold } from '@element-plus/icons-vue'
+import { UserFilled, Calendar, Monitor, More, Expand, Fold, ChatDotRound } from '@element-plus/icons-vue'
 
 const router = useRouter()
 const route = useRoute()

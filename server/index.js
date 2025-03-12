@@ -92,6 +92,26 @@ const moodDescriptions = {
   5: '心情很好，继续保持乐观态度'
 }
 
+// 沟通场景描述
+const communicationScenarios = {
+  work: {
+    title: '工作交流',
+    focus: ['团队协作', '任务分配', '会议沟通', '反馈传达']
+  },
+  relationship: {
+    title: '人际关系',
+    focus: ['建立联系', '维护关系', '表达需求', '共情理解']
+  },
+  conflict: {
+    title: '冲突处理',
+    focus: ['矛盾化解', '立场调和', '情绪管理', '解决方案']
+  },
+  emotion: {
+    title: '情绪管理',
+    focus: ['情绪觉察', '压力缓解', '自我调节', '积极表达']
+  }
+}
+
 // 心理健康分析路由
 app.post('/api/mental-health-analysis', async (req, res) => {
   try {
@@ -145,7 +165,7 @@ app.post('/api/mental-health-analysis', async (req, res) => {
 
     // 解析AI响应
     const content = response.data.choices[0].message.content;
-    console.log('API返回内容:', content);
+    // console.log('API返回内容:', content);
 
     // 直接返回原始内容
     res.json({
@@ -311,6 +331,67 @@ app.post('/api/event-plan', async (req, res) => {
     });
   }
 });
+
+app.post('/api/communication-guide', async (req, res) => {
+  try {
+    const { userType, targetType, scenario } = req.body
+    const scenarioInfo = communicationScenarios[scenario]
+
+    // 构建提示信息
+    const prompt = `作为一个MBTI性格专家和沟通顾问，请为一个${userType}类型的人提供${scenarioInfo.title}方面的建议。
+${targetType ? `对方是${targetType}类型。` : ''}
+
+重点关注以下方面：
+${scenarioInfo.focus.map(f => `- ${f}`).join('\n')}
+
+请从以下几个方面提供具体的指导建议：
+
+1. 沟通特点分析：
+[分析该MBTI类型在${scenarioInfo.title}场景下的特点和倾向]
+
+2. 优势与挑战：
+[列出该类型在此场景中的优势和可能面临的挑战]
+
+3. 具体建议：
+[提供3-5条具体可行的沟通技巧和建议]
+
+4. 注意事项：
+[指出需要特别注意的关键点]
+
+5. 改进方向：
+[建议如何改进和提升沟通效果]
+
+请用中文回答，语气专业温和，建议要具体实用。`
+
+    console.log('开始调用 Deepseek API...')
+    
+    const response = await deepseekApi.post('/chat/completions', {
+      model: "deepseek-chat",
+      messages: [
+        {
+          role: "user",
+          content: prompt
+        }
+      ],
+      temperature: 0.7,
+      max_tokens: 1500
+    })
+
+    console.log('API 调用成功')
+    
+    // 返回AI响应
+    res.json({
+      status: 'success',
+      data: response.data.choices[0].message.content
+    })
+  } catch (error) {
+    console.error('Error generating communication guidance:', error)
+    res.status(500).json({ 
+      error: error.message || '生成沟通指导时出现错误，请稍后重试',
+      details: error.response?.data || error.message 
+    })
+  }
+})
 
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
