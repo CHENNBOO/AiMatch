@@ -11,25 +11,9 @@
         :collapse="isCollapsed"
         @select="handleSelect"
         :router="true">
-        <el-menu-item index="/">
+        <el-menu-item index="/mbti">
           <el-icon><UserFilled /></el-icon>
           <template #title>MBTI匹配</template>
-        </el-menu-item>
-        <el-menu-item index="/event-planner">
-          <el-icon><Calendar /></el-icon>
-          <template #title>事件策划Agent</template>
-        </el-menu-item>
-        <el-menu-item index="/mental-health">
-          <el-icon><Monitor /></el-icon>
-          <span>心理健康</span>
-        </el-menu-item>
-        <el-menu-item index="/communication-guide">
-          <el-icon><ChatDotRound /></el-icon>
-          <span>沟通指导</span>
-        </el-menu-item>
-        <el-menu-item index="/virtual-interaction">
-          <el-icon><Avatar /></el-icon>
-          <span>虚拟互动</span>
         </el-menu-item>
         
         <el-sub-menu index="agent">
@@ -82,7 +66,6 @@
 <script setup lang="ts">
 import { ref, watch } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
-import { UserFilled, Calendar, Monitor, More, Expand, Fold, ChatDotRound, Avatar } from '@element-plus/icons-vue'
 import { UserFilled, Calendar, Monitor, More, Expand, Fold, ChatDotRound, Avatar } from '@element-plus/icons-vue'
 
 const router = useRouter()
