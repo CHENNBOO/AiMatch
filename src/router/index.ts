@@ -4,6 +4,7 @@ import MbtiMatch from '../components/MbtiMatch.vue'
 import EventPlanner from '../components/EventPlanner.vue'
 import MentalHealth from '../components/MentalHealth.vue'
 import CommunicationGuide from '../components/CommunicationGuide.vue'
+import VirtualInteraction from '../components/VirtualInteraction.vue'
 
 const routes = [
   {
@@ -30,6 +31,11 @@ const routes = [
     path: '/communication-guide',
     name: 'communication-guide',
     component: CommunicationGuide
+  },
+  {
+    path: '/virtual-interaction',
+    name: 'virtual-interaction',
+    component: VirtualInteraction
   }
 ]
 
