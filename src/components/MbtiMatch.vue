@@ -226,6 +226,8 @@ const getFullType = (person: PersonType) => {
 }
 
 const calculateMatch = async () => {
+  console.log('开始请求=====calculateMatch');
+  
   const loadingInstance = ElLoading.service({
     lock: true,
     text: '正在分析性格匹配度...',
@@ -236,12 +238,29 @@ const calculateMatch = async () => {
     const type1 = getFullType(person1.value)
     const type2 = getFullType(person2.value)
     
-    const response = await axios.post('/api/mbti-match', {
-      type1,
-      type2
-    })
     
+    // const response = await axios.post('/api/mbti-match', {
+    //   type1,
+    //   type2
+    // })
+
+    
+    //{
+    //"matchPercentageValue": 65,
+    //"description": "### 1. 总体匹配度  \nISTJ和ENFP的总体匹配度为 **65%**。  \nISTJ（内向、实感、思维、判断）和ENFP（外向、直觉、情感、感知）在认知功能上差异较大，ISTJ注重细节、结构和责任，而ENFP则偏好创新、自由和情感表达。这种差异可能导致互补，但也可能引发冲突。匹配度中等偏上，但需要双方努力调和差异。\n\n---\n\n### 2. 沟通方式的兼容性  \n**优势：**  \n- ISTJ的条理性和ENFP的创意性可以互补。ISTJ能为ENFP提供实际支持，而ENFP能为ISTJ带来新视角。  \n- ENFP的开放性有助于ISTJ尝试新事物，ISTJ的稳定性则能为ENFP提供安全感。  \n\n**挑战：**  \n- ISTJ倾向于直接、逻辑化的沟通，而ENFP更注重情感和抽象表达，可能导致误解。  \n- ENFP的跳跃性思维可能让ISTJ感到混乱，而ISTJ的严谨性可能让ENFP感到束缚。  \n\n---\n\n### 3. 共同价值观  \n**契合点：**  \n- 双方都重视承诺和责任感，尽管表达方式不同。ISTJ通过行动体现，ENFP通过情感投入体现。  \n- 在长期目标上，ISTJ和ENFP都希望建立稳定且有意义的亲密关系。  \n\n**差异点：**  \n- ISTJ倾向于传统和规则，ENFP则更注重自由和灵活性。  \n- ISTJ偏好计划性和可预测性，而ENFP更喜欢即兴和变化。  \n\n---\n\n### 4. 可能存在的挑战  \n1. **生活方式冲突：** ISTJ喜欢规律和计划，ENFP则倾向于随性和多变。  \n2. **情感表达差异：** ISTJ可能显得冷漠，ENFP则可能觉得情感需求未被满足。  \n3. **决策方式不同：** ISTJ基于逻辑和事实，ENFP则更依赖直觉和情感。  \n\n---\n\n### 5. 改善建议  \n1. **建立沟通规则：** ISTJ可以尝试倾听ENFP的情感表达，ENFP则需注意逻辑性和条理性，避免过度跳跃。  \n2. **平衡计划与灵活性：** ISTJ可以适当放松计划，ENFP则需尊重ISTJ对稳定性的需求，共同制定折中方案。  \n3. **定期情感交流：** 双方可以每周安排固定时间进行深度沟通，ISTJ表达感受，ENFP提供情感支持，增进理解。  \n\n---\n\n总结：ISTJ和ENFP的匹配度为65%，双方在沟通、价值观和生活方式上存在显著差异，但通过努力调和，可以建立互补且稳定的关系。"
+//}
+//模拟发起请求，返回数据
+console.log('模拟请求=====calculateMatch');
+const response = {  
+  data: {
+    "matchPercentageValue": 65,
+    "description": "### 1. 总体匹配度  \nISTJ和ENFP的总体匹配度为 **65%**。  \nISTJ（内向、实感、思维、判断）和ENFP（外向、直觉、情感、感知）在认知功能上差异较大，ISTJ注重细节、结构和责任，而ENFP则偏好创新、自由和情感表达。这种差异可能导致互补，但也可能引发冲突。匹配度中等偏上，但需要双方努力调和差异。\n\n---\n\n### 2. 沟通方式的兼容性  \n**优势：**  \n- ISTJ的条理性和ENFP的创意性可以互补。ISTJ能为ENFP提供实际支持，而ENFP能为ISTJ带来新视角。  \n- ENFP的开放性有助于ISTJ尝试新事物，ISTJ的稳定性则能为ENFP提供安全感。  \n\n**挑战：**  \n- ISTJ倾向于直接、逻辑化的沟通，而ENFP更注重情感和抽象表达，可能导致误解。  \n- ENFP的跳跃性思维可能让ISTJ感到混乱，而ISTJ的严谨性可能让ENFP感到束缚。  \n\n---\n\n### 3. 共同价值观  \n**契合点：**  \n- 双方都重视承诺和责任感，尽管表达方式不同。ISTJ通过行动体现，ENFP通过情感投入体现。  \n- 在长期目标上，ISTJ和ENFP都希望建立稳定且有意义的亲密关系。  \n\n**差异点：**  \n- ISTJ倾向于传统和规则，ENFP则更注重自由和灵活性。  \n- ISTJ偏好计划性和可预测性，而ENFP更喜欢即兴和变化。  \n\n---\n\n### 4. 可能存在的挑战  \n1. **生活方式冲突：** ISTJ喜欢规律和计划，ENFP则倾向于随性和多变。  \n2. **情感表达差异：** ISTJ可能显得冷漠，ENFP则可能觉得情感需求未被满足。  \n3. **决策方式不同：** ISTJ基于逻辑和事实，ENFP则更依赖直觉和情感。  \n\n---\n\n### 5. 改善建议  \n1. **建立沟通规则：** ISTJ可以尝试倾听ENFP的情感表达，ENFP则需注意逻辑性和条理性，避免过度跳跃。  \n2. **平衡计划与灵活性：** ISTJ可以适当放松计划，ENFP则需尊重ISTJ对稳定性的需求，共同制定折中方案。  \n3. **定期情感交流：** 双方可以每周安排固定时间进行深度沟通，ISTJ表达感受，ENFP提供情感支持，增进理解。  \n\n---\n\n总结：ISTJ和ENFP的匹配度为65%，双方在沟通、价值观和生活方式上存在显著差异，但通过努力调和，可以建立互补且稳定的关系。"
+  }
+}
+    
+
     const { matchPercentageValue, description } = response.data
+    console.log('response.data====请求结束====',response.data);
     
     showResult.value = true
     matchPercentage.value = matchPercentageValue
@@ -281,25 +300,29 @@ const parsedDescription = computed(() => {
 
   if (!matchDescription.value) return description
 
+  const cleanText = (text: string) => {
+    return text.replace(/[#*`]/g, '').trim()
+  }
+
   const sections = matchDescription.value.split('\n\n')
   
   sections.forEach(section => {
     if (section.includes('总体匹配度')) {
-      description.overall = section
+      description.overall = cleanText(section)
     } else if (section.includes('沟通方式')) {
-      description.communication = section.replace('沟通方式：', '').trim()
+      description.communication = cleanText(section.replace('沟通方式：', '').trim())
     } else if (section.includes('共同价值观')) {
-      description.values = section.replace('共同价值观：', '').trim()
+      description.values = cleanText(section.replace('共同价值观：', '').trim())
     } else if (section.includes('可能存在的挑战')) {
       description.challenges = section
         .split('\n')
         .filter(line => line.startsWith('-'))
-        .map(line => line.replace('-', '').trim())
+        .map(line => cleanText(line.replace('-', '').trim()))
     } else if (section.includes('改善建议')) {
       description.suggestions = section
         .split('\n')
         .filter(line => /^\d+\./.test(line))
-        .map(line => line.replace(/^\d+\.\s*/, '').trim())
+        .map(line => cleanText(line.replace(/^\d+\.\s*/, '').trim()))
     }
   })
 

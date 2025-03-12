@@ -160,7 +160,6 @@ app.post('/api/mbti-match', async (req, res) => {
     });
 
     console.log('API 调用成功');
-
     // 解析响应
     const analysis = response.data.choices[0].message.content;
     
