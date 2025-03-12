@@ -112,41 +112,43 @@ const communicationScenarios = {
   }
 }
 
-// 心理健康分析路由
-app.post('/api/mental-health-analysis', async (req, res) => {
+// 虚拟互动路由
+app.post('/api/virtual-interaction', async (req, res) => {
   try {
-    const { mbtiType, moodRating, stressLevel, symptoms } = req.body
+    const { selfProfile, partnerProfile, scenario, message, isInitial } = req.body
+    const scenarioInfo = communicationScenarios[scenario]
 
-    // 获取MBTI特征
-    const traits = mbtiTraits[mbtiType]
-    const stressDesc = stressLevels[stressLevel]
-    const moodDesc = moodDescriptions[moodRating]
+    if (!selfProfile?.mbtiType || !partnerProfile?.mbtiType || !scenario) {
+      return res.status(400).json({
+        status: 'error',
+        message: '缺少必要的参数：MBTI类型或场景'
+      })
+    }
+
+    // 确保 traits 和 interests 是数组
+    const selfTraits = Array.isArray(selfProfile.traits) ? selfProfile.traits : []
+    const selfInterests = Array.isArray(selfProfile.interests) ? selfProfile.interests : []
+    const partnerTraits = Array.isArray(partnerProfile.traits) ? partnerProfile.traits : []
+    const partnerInterests = Array.isArray(partnerProfile.interests) ? partnerProfile.interests : []
 
     // 构建提示信息
-    const prompt = `作为一个专业的心理健康顾问，请基于以下信息为用户提供全面的心理健康分析和建议：
+    let prompt = `作为一个${partnerProfile.mbtiType}类型的人，你正在与一个${selfProfile.mbtiType}类型的人进行${scenarioInfo.title}。
 
-1. MBTI类型：${mbtiType}
-- 关注重点：${traits.focus}
-- 压力源：${traits.stress}
-- 优势：${traits.strength}
+你的性格特征：${partnerTraits.length > 0 ? partnerTraits.join('、') : '暂无描述'}
+你的兴趣爱好：${partnerInterests.length > 0 ? partnerInterests.join('、') : '暂无描述'}
 
-2. 当前状态：
-- 心情评分：${moodRating}/5 (${moodDesc})
-- 压力水平：${stressLevel}/100 (${stressDesc})
-- 症状：${symptoms.join('、')}
+对方的性格特征：${selfTraits.length > 0 ? selfTraits.join('、') : '暂无描述'}
+对方的兴趣爱好：${selfInterests.length > 0 ? selfInterests.join('、') : '暂无描述'}
 
-请提供以下格式的分析：
+场景主题：${scenarioInfo.focus.join('、')}`
 
-1. 总体评估：[简要总结当前心理状态]
-2. 个性化见解：[基于MBTI类型的分析]
-3. 建议：
-   - 日常建议：[具体可行的日常调节方法]
-   - 压力管理：[针对性的压力管理技巧]
-   - 专业帮助：[必要时的专业帮助建议]
+    if (isInitial) {
+      prompt += `\n\n请以你的身份开启对话，用一句话自然地开启这个${scenarioInfo.title}场景。回复要简短自然，符合MBTI类型和性格特征。`
+    } else {
+      prompt += `\n\n对方说：${message}\n\n请以你的身份回应这句话。回复要简短自然，符合MBTI类型和性格特征。不要一次回复多句话，保持对话的自然流动性。`
+    }
 
-请用中文回答，语气温和专业，建议具体可行。`
-
-    console.log('开始调用 Deepseek API...');
+    console.log('开始调用 Deepseek API...')
     
     const response = await deepseekApi.post('/chat/completions', {
       model: "deepseek-chat",
@@ -157,25 +159,19 @@ app.post('/api/mental-health-analysis', async (req, res) => {
         }
       ],
       temperature: 0.7,
-      max_tokens: 1500
-    });
+      max_tokens: 150  // 限制回复长度，确保每次只生成一句话
+    })
 
-    console.log('API 调用成功');
-   
-
-    // 解析AI响应
-    const content = response.data.choices[0].message.content;
-    // console.log('API返回内容:', content);
-
-    // 直接返回原始内容
+    console.log('API 调用成功')
+    
     res.json({
       status: 'success',
-      data: content
-    });
+      data: response.data.choices[0].message.content.trim()
+    })
   } catch (error) {
-    console.error('Error generating mental health analysis:', error)
+    console.error('Error generating virtual interaction:', error)
     res.status(500).json({ 
-      error: error.message || '生成分析报告时出现错误，请稍后重试',
+      error: error.message || '生成互动对话时出现错误，请稍后重试',
       details: error.response?.data || error.message 
     })
   }
