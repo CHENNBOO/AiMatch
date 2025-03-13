@@ -211,8 +211,7 @@ import { ElLoading, ElMessage } from 'element-plus'
 import { InfoFilled, ChatDotRound, Connection, Warning, Sunny, DocumentCopy } from '@element-plus/icons-vue'
 import 'animate.css'
 
-// 配置axios默认URL
-axios.defaults.baseURL = 'http://localhost:3000'
+
 
 interface PersonType {
   EI: string
