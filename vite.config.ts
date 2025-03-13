@@ -9,7 +9,8 @@ export default defineConfig({
     proxy: {
       '/api': {
         // 修改点1: 指向本地后端服务
-        target: 'http://117.72.43.183:3000', 
+        // target: 'http://117.72.43.183:3000', 
+        target: 'http://localhost:3000', 
         changeOrigin: true,
         
         // 新增配置：路径重写（可选）

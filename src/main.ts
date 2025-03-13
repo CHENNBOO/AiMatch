@@ -2,6 +2,8 @@ import { createApp } from 'vue'
 import ElementPlus from 'element-plus'
 import * as ElementPlusIconsVue from '@element-plus/icons-vue'
 import 'element-plus/dist/index.css'
+import 'animate.css'
+import './style.css'
 import router from './router'
 import App from './App.vue'
 import axios from 'axios';
@@ -13,7 +15,7 @@ for (const [key, component] of Object.entries(ElementPlusIconsVue)) {
 }
 
 // 配置axios默认URL
-axios.defaults.baseURL = 'http://117.72.43.183:3000'
+axios.defaults.baseURL = 'http://localhost:3000'
 
 app.use(ElementPlus)
 app.use(router)

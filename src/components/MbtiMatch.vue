@@ -1,203 +1,188 @@
 <template>
-  <div class="mbti-match-container">
-    <!-- 左侧选择区 -->
-    <div class="personality-selector left-side">
-      <h2>第一个人的性格类型</h2>
-      <div class="mbti-buttons">
-        <div class="button-group">
-          <el-button-group>
-            <el-button 
-              :class="{ active: person1.EI === 'I' }" 
-              @click="person1.EI = 'I'">内向 (I)</el-button>
-            <el-button 
-              :class="{ active: person1.EI === 'E' }" 
-              @click="person1.EI = 'E'">外向 (E)</el-button>
-          </el-button-group>
-        </div>
-        <div class="button-group">
-          <el-button-group>
-            <el-button 
-              :class="{ active: person1.SN === 'S' }" 
-              @click="person1.SN = 'S'">感觉 (S)</el-button>
-            <el-button 
-              :class="{ active: person1.SN === 'N' }" 
-              @click="person1.SN = 'N'">直觉 (N)</el-button>
-          </el-button-group>
-        </div>
-        <div class="button-group">
-          <el-button-group>
-            <el-button 
-              :class="{ active: person1.TF === 'T' }" 
-              @click="person1.TF = 'T'">思维 (T)</el-button>
-            <el-button 
-              :class="{ active: person1.TF === 'F' }" 
-              @click="person1.TF = 'F'">感觉 (F)</el-button>
-          </el-button-group>
-        </div>
-        <div class="button-group">
-          <el-button-group>
-            <el-button 
-              :class="{ active: person1.JP === 'J' }" 
-              @click="person1.JP = 'J'">判断 (J)</el-button>
-            <el-button 
-              :class="{ active: person1.JP === 'P' }" 
-              @click="person1.JP = 'P'">知觉 (P)</el-button>
-          </el-button-group>
-        </div>
+  <div class="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 dark:from-gray-900 dark:to-gray-800">
+    <!-- 背景装饰 -->
+    <div class="fixed inset-0 overflow-hidden pointer-events-none">
+      <div class="absolute -top-1/2 -left-1/2 w-full h-full bg-gradient-to-br from-blue-500/10 to-purple-500/10 rounded-full blur-3xl"></div>
+      <div class="absolute -bottom-1/2 -right-1/2 w-full h-full bg-gradient-to-br from-pink-500/10 to-orange-500/10 rounded-full blur-3xl"></div>
+    </div>
+
+    <!-- 主要内容区 -->
+    <div class="container mx-auto px-4 py-8 relative">
+      <!-- 标题区 -->
+      <div class="text-center mb-12">
+        <h1 class="text-4xl font-bold text-gray-900 dark:text-white mb-4">MBTI 性格匹配分析</h1>
+        <p class="text-gray-600 dark:text-gray-300 text-lg">探索不同性格类型之间的互动与和谐</p>
       </div>
-    </div>
 
-    <!-- 右侧选择区 -->
-    <div class="personality-selector right-side">
-      <h2>第二个人的性格类型</h2>
-      <div class="mbti-buttons">
-        <div class="button-group">
-          <el-button-group>
-            <el-button 
-              :class="{ active: person2.EI === 'I' }" 
-              @click="person2.EI = 'I'">内向 (I)</el-button>
-            <el-button 
-              :class="{ active: person2.EI === 'E' }" 
-              @click="person2.EI = 'E'">外向 (E)</el-button>
-          </el-button-group>
-        </div>
-        <div class="button-group">
-          <el-button-group>
-            <el-button 
-              :class="{ active: person2.SN === 'S' }" 
-              @click="person2.SN = 'S'">感觉 (S)</el-button>
-            <el-button 
-              :class="{ active: person2.SN === 'N' }" 
-              @click="person2.SN = 'N'">直觉 (N)</el-button>
-          </el-button-group>
-        </div>
-        <div class="button-group">
-          <el-button-group>
-            <el-button 
-              :class="{ active: person2.TF === 'T' }" 
-              @click="person2.TF = 'T'">思维 (T)</el-button>
-            <el-button 
-              :class="{ active: person2.TF === 'F' }" 
-              @click="person2.TF = 'F'">感觉 (F)</el-button>
-          </el-button-group>
-        </div>
-        <div class="button-group">
-          <el-button-group>
-            <el-button 
-              :class="{ active: person2.JP === 'J' }" 
-              @click="person2.JP = 'J'">判断 (J)</el-button>
-            <el-button 
-              :class="{ active: person2.JP === 'P' }" 
-              @click="person2.JP = 'P'">知觉 (P)</el-button>
-          </el-button-group>
-        </div>
-      </div>
-    </div>
-
-    <!-- 中央匹配按钮 -->
-    <div class="match-button-container" v-if="!showResult">
-      <el-button 
-        type="primary" 
-        size="large" 
-        :disabled="!isSelectionComplete"
-        @click="calculateMatch"
-        class="match-button animate__animated animate__pulse animate__infinite">
-        开始匹配
-      </el-button>
-    </div>
-
-    <!-- 结果展示区 -->
-    <div v-if="showResult" class="result-container animate__animated animate__fadeIn">
-      <div class="result-card">
-        <div class="result-header">
-          <h2>匹配分析报告</h2>
-          <div class="personality-types">
-            <div class="type-card">
-              <span class="type-label">性格类型一</span>
-              <span class="type-value">{{ getFullType(person1) }}</span>
-            </div>
-            <div class="match-percentage">
-              <el-progress 
-                type="dashboard"
-                :percentage="matchPercentage"
-                :stroke-width="12"
-                :width="180"
-                class="animate__animated animate__zoomIn"
-                :format="(percentage) => `${percentage}% 匹配度`">
-              </el-progress>
-            </div>
-            <div class="type-card">
-              <span class="type-label">性格类型二</span>
-              <span class="type-value">{{ getFullType(person2) }}</span>
+      <!-- 选择区域 -->
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-8 mb-12">
+        <!-- 左侧选择区 -->
+        <div class="bg-white/80 dark:bg-gray-800/80 backdrop-blur-xl rounded-2xl p-8 shadow-lg hover:shadow-xl transition-all duration-300">
+          <h2 class="text-2xl font-semibold text-gray-900 dark:text-white mb-6">第一个人的性格类型</h2>
+          <div class="space-y-6">
+            <div v-for="(dimension, key) in dimensions" :key="key" class="space-y-3">
+              <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">{{ dimension.label }}</label>
+              <div class="grid grid-cols-2 gap-4">
+                <button
+                  v-for="option in dimension.options"
+                  :key="option.value"
+                  @click="person1[key] = option.value"
+                  :class="[
+                    'px-6 py-3 rounded-xl text-sm font-medium transition-all duration-200',
+                    person1[key] === option.value
+                      ? 'bg-blue-500 text-white shadow-lg shadow-blue-500/30'
+                      : 'bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-600'
+                  ]"
+                >
+                  {{ option.label }}
+                </button>
+              </div>
             </div>
           </div>
         </div>
-        
-        <el-divider />
-        
-        <div class="match-analysis">
-          <el-card class="analysis-section" v-if="parsedDescription.overall">
-            <template #header>
-              <div class="card-header">
-                <h3><el-icon><InfoFilled /></el-icon> 总体匹配度</h3>
-              </div>
-            </template>
-            <p>{{ parsedDescription.overall }}</p>
-          </el-card>
-          
-          <el-card class="analysis-section" v-if="parsedDescription.communication">
-            <template #header>
-              <div class="card-header">
-                <h3><el-icon><ChatDotRound /></el-icon> 沟通方式的兼容性</h3>
-              </div>
-            </template>
-            <p>{{ parsedDescription.communication }}</p>
-          </el-card>
-          
-          <el-card class="analysis-section" v-if="parsedDescription.values">
-            <template #header>
-              <div class="card-header">
-                <h3><el-icon><Connection /></el-icon> 共同价值观</h3>
-              </div>
-            </template>
-            <p>{{ parsedDescription.values }}</p>
-          </el-card>
-          
-          <el-card class="analysis-section" v-if="parsedDescription.challenges">
-            <template #header>
-              <div class="card-header">
-                <h3><el-icon><Warning /></el-icon> 可能存在的挑战</h3>
-              </div>
-            </template>
-            <p>{{ parsedDescription.challenges }}</p>
-          </el-card>
-          
-          <el-card class="analysis-section" v-if="parsedDescription.suggestions">
-            <template #header>
-              <div class="card-header">
-                <h3><el-icon><Sunny /></el-icon> 改善建议</h3>
-              </div>
-            </template>
-            <p>{{ parsedDescription.suggestions }}</p>
-          </el-card>
 
-          <el-card class="analysis-section" v-if="parsedDescription.summary">
-            <template #header>
-              <div class="card-header">
-                <h3><el-icon><DocumentCopy /></el-icon> 总结</h3>
+        <!-- 右侧选择区 -->
+        <div class="bg-white/80 dark:bg-gray-800/80 backdrop-blur-xl rounded-2xl p-8 shadow-lg hover:shadow-xl transition-all duration-300">
+          <h2 class="text-2xl font-semibold text-gray-900 dark:text-white mb-6">第二个人的性格类型</h2>
+          <div class="space-y-6">
+            <div v-for="(dimension, key) in dimensions" :key="key" class="space-y-3">
+              <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">{{ dimension.label }}</label>
+              <div class="grid grid-cols-2 gap-4">
+                <button
+                  v-for="option in dimension.options"
+                  :key="option.value"
+                  @click="person2[key] = option.value"
+                  :class="[
+                    'px-6 py-3 rounded-xl text-sm font-medium transition-all duration-200',
+                    person2[key] === option.value
+                      ? 'bg-blue-500 text-white shadow-lg shadow-blue-500/30'
+                      : 'bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-600'
+                  ]"
+                >
+                  {{ option.label }}
+                </button>
               </div>
-            </template>
-            <p>{{ parsedDescription.summary }}</p>
-          </el-card>
+            </div>
+          </div>
         </div>
-        
-        <div class="action-buttons">
-          <el-button type="primary" @click="resetSelection" class="reset-button">
-            重新匹配
-          </el-button>
-          <el-button @click="exportReport" class="export-button">
-            导出报告
-          </el-button>
+      </div>
+
+      <!-- 匹配按钮 -->
+      <div class="text-center mb-12">
+        <button
+          @click="calculateMatch"
+          :disabled="!isSelectionComplete"
+          :class="[
+            'px-8 py-4 rounded-2xl text-lg font-semibold transition-all duration-300 transform hover:scale-105',
+            isSelectionComplete
+              ? 'bg-blue-500 text-white shadow-lg shadow-blue-500/30 hover:bg-blue-600'
+              : 'bg-gray-300 dark:bg-gray-700 text-gray-500 dark:text-gray-400 cursor-not-allowed'
+          ]"
+        >
+          开始匹配分析
+        </button>
+      </div>
+
+      <!-- 结果展示区 -->
+      <div v-if="showResult" class="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+        <div class="bg-white dark:bg-gray-800 rounded-3xl shadow-2xl max-w-4xl w-full max-h-[90vh] overflow-y-auto">
+          <div class="p-8">
+            <!-- 结果头部 -->
+            <div class="text-center mb-8">
+              <h2 class="text-3xl font-bold text-gray-900 dark:text-white mb-4">匹配分析报告</h2>
+              <div class="flex items-center justify-center space-x-8">
+                <div class="text-center">
+                  <div class="text-sm text-gray-600 dark:text-gray-400 mb-2">性格类型一</div>
+                  <div class="text-2xl font-bold text-blue-500">{{ getFullType(person1) }}</div>
+                </div>
+                <div class="relative">
+                  <el-progress
+                    type="dashboard"
+                    :percentage="matchPercentage"
+                    :stroke-width="12"
+                    :width="180"
+                    :format="(percentage) => `${percentage}%`"
+                    class="animate__animated animate__zoomIn"
+                  />
+                </div>
+                <div class="text-center">
+                  <div class="text-sm text-gray-600 dark:text-gray-400 mb-2">性格类型二</div>
+                  <div class="text-2xl font-bold text-blue-500">{{ getFullType(person2) }}</div>
+                </div>
+              </div>
+            </div>
+
+            <!-- 分析内容 -->
+            <div class="space-y-6">
+              <div v-if="parsedDescription.overall" class="bg-gray-50 dark:bg-gray-700/50 rounded-2xl p-6">
+                <h3 class="text-xl font-semibold text-gray-900 dark:text-white mb-4 flex items-center">
+                  <el-icon class="mr-2"><InfoFilled /></el-icon>
+                  总体评价
+                </h3>
+                <p class="text-gray-700 dark:text-gray-300 leading-relaxed">{{ parsedDescription.overall }}</p>
+              </div>
+
+              <div v-if="parsedDescription.communication" class="bg-gray-50 dark:bg-gray-700/50 rounded-2xl p-6">
+                <h3 class="text-xl font-semibold text-gray-900 dark:text-white mb-4 flex items-center">
+                  <el-icon class="mr-2"><ChatDotRound /></el-icon>
+                  沟通方式
+                </h3>
+                <p class="text-gray-700 dark:text-gray-300 leading-relaxed">{{ parsedDescription.communication }}</p>
+              </div>
+
+              <div v-if="parsedDescription.values" class="bg-gray-50 dark:bg-gray-700/50 rounded-2xl p-6">
+                <h3 class="text-xl font-semibold text-gray-900 dark:text-white mb-4 flex items-center">
+                  <el-icon class="mr-2"><Connection /></el-icon>
+                  共同价值观
+                </h3>
+                <p class="text-gray-700 dark:text-gray-300 leading-relaxed">{{ parsedDescription.values }}</p>
+              </div>
+
+              <div v-if="parsedDescription.challenges?.length" class="bg-gray-50 dark:bg-gray-700/50 rounded-2xl p-6">
+                <h3 class="text-xl font-semibold text-gray-900 dark:text-white mb-4 flex items-center">
+                  <el-icon class="mr-2"><Warning /></el-icon>
+                  可能存在的挑战
+                </h3>
+                <ul class="space-y-3">
+                  <li v-for="(challenge, index) in parsedDescription.challenges" :key="index"
+                    class="flex items-start text-gray-700 dark:text-gray-300">
+                    <span class="text-blue-500 mr-2">•</span>
+                    {{ challenge }}
+                  </li>
+                </ul>
+              </div>
+
+              <div v-if="parsedDescription.suggestions?.length" class="bg-gray-50 dark:bg-gray-700/50 rounded-2xl p-6">
+                <h3 class="text-xl font-semibold text-gray-900 dark:text-white mb-4 flex items-center">
+                  <el-icon class="mr-2"><Sunny /></el-icon>
+                  改善建议
+                </h3>
+                <ul class="space-y-3">
+                  <li v-for="(suggestion, index) in parsedDescription.suggestions" :key="index"
+                    class="flex items-start text-gray-700 dark:text-gray-300">
+                    <span class="text-blue-500 mr-2">{{ index + 1 }}.</span>
+                    {{ suggestion }}
+                  </li>
+                </ul>
+              </div>
+            </div>
+
+            <!-- 操作按钮 -->
+            <div class="flex justify-center space-x-4 mt-8">
+              <button
+                @click="resetSelection"
+                class="px-6 py-3 rounded-xl bg-blue-500 text-white font-medium hover:bg-blue-600 transition-colors duration-200"
+              >
+                重新匹配
+              </button>
+              <button
+                @click="exportReport"
+                class="px-6 py-3 rounded-xl bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 font-medium hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors duration-200"
+              >
+                导出报告
+              </button>
+            </div>
+          </div>
         </div>
       </div>
     </div>
@@ -208,16 +193,62 @@
 import { ref, computed } from 'vue'
 import axios from 'axios'
 import { ElLoading, ElMessage } from 'element-plus'
-import { InfoFilled, ChatDotRound, Connection, Warning, Sunny, DocumentCopy } from '@element-plus/icons-vue'
+import { InfoFilled, ChatDotRound, Connection, Warning, Sunny } from '@element-plus/icons-vue'
 import 'animate.css'
-
-
 
 interface PersonType {
   EI: string
   SN: string
   TF: string
   JP: string
+}
+
+interface DimensionOption {
+  label: string
+  value: string
+}
+
+interface Dimension {
+  label: string
+  options: DimensionOption[]
+}
+
+interface Dimensions {
+  EI: Dimension
+  SN: Dimension
+  TF: Dimension
+  JP: Dimension
+}
+
+const dimensions: Dimensions = {
+  EI: {
+    label: '外向 (E) / 内向 (I)',
+    options: [
+      { label: '外向 (E)', value: 'E' },
+      { label: '内向 (I)', value: 'I' }
+    ]
+  },
+  SN: {
+    label: '感觉 (S) / 直觉 (N)',
+    options: [
+      { label: '感觉 (S)', value: 'S' },
+      { label: '直觉 (N)', value: 'N' }
+    ]
+  },
+  TF: {
+    label: '思维 (T) / 情感 (F)',
+    options: [
+      { label: '思维 (T)', value: 'T' },
+      { label: '情感 (F)', value: 'F' }
+    ]
+  },
+  JP: {
+    label: '判断 (J) / 知觉 (P)',
+    options: [
+      { label: '判断 (J)', value: 'J' },
+      { label: '知觉 (P)', value: 'P' }
+    ]
+  }
 }
 
 const person1 = ref<PersonType>({
@@ -234,9 +265,64 @@ const person2 = ref<PersonType>({
   JP: ''
 })
 
+interface MatchResult {
+  description: string;
+  percentage: number;
+}
+
 const showResult = ref(false)
 const matchPercentage = ref(0)
-const matchDescription = ref('')
+const matchResult = ref<MatchResult | null>(null)
+
+interface MatchSections {
+  overall: string;
+  communication: string;
+  values: string;
+  challenges: string;
+  suggestions: string;
+  summary: string;
+}
+
+const matchDescription = computed<MatchSections | null>(() => {
+  if (!matchResult.value) return null
+
+  const sections: MatchSections = {
+    overall: '',
+    communication: '',
+    values: '',
+    challenges: '',
+    suggestions: '',
+    summary: ''
+  }
+
+  const lines = matchResult.value.description.split('\n')
+  let currentSection: keyof MatchSections = 'overall'
+
+  lines.forEach(line => {
+    if (line.includes('总体评价')) {
+      currentSection = 'overall'
+    } else if (line.includes('沟通方式')) {
+      currentSection = 'communication'
+    } else if (line.includes('共同价值观')) {
+      currentSection = 'values'
+    } else if (line.includes('可能存在的挑战')) {
+      currentSection = 'challenges'
+    } else if (line.includes('改善建议')) {
+      currentSection = 'suggestions'
+    } else if (line.includes('总结')) {
+      currentSection = 'summary'
+    } else if (line.trim()) {
+      let cleanLine = line.trim()
+      if (currentSection === 'challenges' || currentSection === 'suggestions') {
+        cleanLine = cleanLine.replace(/^[\d、.]+/, '').trim()
+      }
+      sections[currentSection] += cleanLine + '\n'
+    }
+  })
+
+  return sections
+})
+
 const isLoading = ref(false)
 
 const isSelectionComplete = computed(() => {
@@ -249,8 +335,6 @@ const getFullType = (person: PersonType) => {
 }
 
 const calculateMatch = async () => {
-  console.log('开始请求=====calculateMatch');
-  
   const loadingInstance = ElLoading.service({
     lock: true,
     text: '正在分析性格匹配度...',
@@ -261,30 +345,16 @@ const calculateMatch = async () => {
     const type1 = getFullType(person1.value)
     const type2 = getFullType(person2.value)
     
-    
     const response = await axios.post('/api/mbti-match', {
       type1,
       type2
     })
-
     
-    
-//模拟发起请求，返回数据
-// console.log('模拟请求===111==calculateMatch');
-// const response = {  
-//   data: {
-//     "matchPercentageValue": 65,
-//     "description": "### 1. 总体匹配度  \nISTJ和ENFP的总体匹配度为 **65%**。  \nISTJ（内向、实感、思维、判断）和ENFP（外向、直觉、情感、感知）在认知功能上差异较大，ISTJ注重细节、结构和责任，而ENFP则偏好创新、自由和情感表达。这种差异可能导致互补，但也可能引发冲突。匹配度中等偏上，但需要双方努力调和差异。\n\n---\n\n### 2. 沟通方式的兼容性  \n**优势：**  \n- ISTJ的条理性和ENFP的创意性可以互补。ISTJ能为ENFP提供实际支持，而ENFP能为ISTJ带来新视角。  \n- ENFP的开放性有助于ISTJ尝试新事物，ISTJ的稳定性则能为ENFP提供安全感。  \n\n**挑战：**  \n- ISTJ倾向于直接、逻辑化的沟通，而ENFP更注重情感和抽象表达，可能导致误解。  \n- ENFP的跳跃性思维可能让ISTJ感到混乱，而ISTJ的严谨性可能让ENFP感到束缚。  \n\n---\n\n### 3. 共同价值观  \n**契合点：**  \n- 双方都重视承诺和责任感，尽管表达方式不同。ISTJ通过行动体现，ENFP通过情感投入体现。  \n- 在长期目标上，ISTJ和ENFP都希望建立稳定且有意义的亲密关系。  \n\n**差异点：**  \n- ISTJ倾向于传统和规则，ENFP则更注重自由和灵活性。  \n- ISTJ偏好计划性和可预测性，而ENFP更喜欢即兴和变化。  \n\n---\n\n### 4. 可能存在的挑战  \n1. **生活方式冲突：** ISTJ喜欢规律和计划，ENFP则倾向于随性和多变。  \n2. **情感表达差异：** ISTJ可能显得冷漠，ENFP则可能觉得情感需求未被满足。  \n3. **决策方式不同：** ISTJ基于逻辑和事实，ENFP则更依赖直觉和情感。  \n\n---\n\n### 5. 改善建议  \n1. **建立沟通规则：** ISTJ可以尝试倾听ENFP的情感表达，ENFP则需注意逻辑性和条理性，避免过度跳跃。  \n2. **平衡计划与灵活性：** ISTJ可以适当放松计划，ENFP则需尊重ISTJ对稳定性的需求，共同制定折中方案。  \n3. **定期情感交流：** 双方可以每周安排固定时间进行深度沟通，ISTJ表达感受，ENFP提供情感支持，增进理解。  \n\n---\n\n总结：ISTJ和ENFP的匹配度为65%，双方在沟通、价值观和生活方式上存在显著差异，但通过努力调和，可以建立互补且稳定的关系。"
-//   }
-// }
-    
-
     const { matchPercentageValue, description } = response.data
-    console.log('response.data====请求结束====',response.data);
     
     showResult.value = true
     matchPercentage.value = matchPercentageValue
-    matchDescription.value = description
+    matchResult.value = { description, percentage: matchPercentageValue }
   } catch (error) {
     ElMessage.error('抱歉，分析过程出现错误，请稍后重试')
     console.error('Error:', error)
@@ -293,80 +363,24 @@ const calculateMatch = async () => {
   }
 }
 
-const resetSelection = () => {
-  person1.value = { EI: '', SN: '', TF: '', JP: '' }
-  person2.value = { EI: '', SN: '', TF: '', JP: '' }
-  showResult.value = false
-  matchPercentage.value = 0
-  matchDescription.value = ''
-}
-
-interface AnalysisDescription {
-  overall: string
-  communication: string
-  values: string
-  challenges: string
-  suggestions: string
-  summary: string
-}
-
 const parsedDescription = computed(() => {
-  const description: AnalysisDescription = {
-    overall: '',
-    communication: '',
-    values: '',
-    challenges: '',
-    suggestions: '',
-    summary: ''
-  }
-
-  if (!matchDescription.value) return description
-
-  const cleanText = (text: string) => {
-    // 移除特殊字符和数字编号，但保留基本标点符号
-    return text
-      .replace(/[#*`]/g, '')
-      .replace(/^\d+[.、]\s*/gm, '')
-      .replace(/^[-•]\s*/gm, '')
-      .trim()
-  }
-
-  const sections = matchDescription.value.split('\n\n')
-  
-  sections.forEach(section => {
-    if (section.includes('总体匹配度')) {
-      const lines = section.split('\n').slice(1)
-      description.overall = cleanText(lines.join(' '))
-    } else if (section.includes('沟通方式的兼容性')) {
-      const lines = section.split('\n').filter(line => 
-        !line.includes('沟通方式的兼容性') && 
-        !line.includes('优势：') && 
-        !line.includes('挑战：')
-      )
-      description.communication = cleanText(lines.join(' '))
-    } else if (section.includes('共同价值观')) {
-      const lines = section.split('\n').filter(line => 
-        !line.includes('共同价值观') && 
-        !line.includes('契合点：') && 
-        !line.includes('差异点：')
-      )
-      description.values = cleanText(lines.join(' '))
-    } else if (section.includes('可能存在的挑战')) {
-      const lines = section.split('\n').filter(line => 
-        !line.includes('可能存在的挑战')
-      )
-      description.challenges = cleanText(lines.join(' '))
-    } else if (section.includes('改善建议')) {
-      const lines = section.split('\n').filter(line => 
-        !line.includes('改善建议')
-      )
-      description.suggestions = cleanText(lines.join(' '))
-    } else if (section.includes('总结：')) {
-      description.summary = cleanText(section.replace('总结：', ''))
+  if (!matchDescription.value) {
+    return {
+      overall: '',
+      communication: '',
+      values: '',
+      challenges: [],
+      suggestions: []
     }
-  })
+  }
 
-  return description
+  return {
+    overall: matchDescription.value.overall,
+    communication: matchDescription.value.communication,
+    values: matchDescription.value.values,
+    challenges: matchDescription.value.challenges.split('\n').filter(line => line.trim()),
+    suggestions: matchDescription.value.suggestions.split('\n').filter(line => line.trim())
+  }
 })
 
 const exportReport = () => {
@@ -377,7 +391,7 @@ MBTI 性格匹配分析报告
 性格类型二：${getFullType(person2.value)}
 匹配度：${matchPercentage.value}%
 
-${matchDescription.value}
+${matchResult.value?.description}
 
 生成时间：${new Date().toLocaleString()}
   `.trim()
@@ -392,260 +406,65 @@ ${matchDescription.value}
   document.body.removeChild(link)
   URL.revokeObjectURL(url)
 }
+
+const resetSelection = () => {
+  person1.value = { EI: '', SN: '', TF: '', JP: '' }
+  person2.value = { EI: '', SN: '', TF: '', JP: '' }
+  showResult.value = false
+  matchPercentage.value = 0
+  matchResult.value = null
+}
 </script>
 
-<style scoped>
-.mbti-match-container {
-  display: flex;
-  height: 100vh;
-  background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
-  position: relative;
-  overflow: hidden;
+<style>
+/* 自定义滚动条样式 */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
 }
 
-.personality-selector {
-  flex: 1;
-  padding: 2rem;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-}
-
-.left-side {
-  border-right: 1px solid rgba(0, 0, 0, 0.1);
-}
-
-h2 {
-  color: #2c3e50;
-  margin-bottom: 2rem;
-  font-size: 1.5rem;
-}
-
-.mbti-buttons {
-  display: flex;
-  flex-direction: column;
-  gap: 1.5rem;
-}
-
-.button-group {
-  display: flex;
-  justify-content: center;
-}
-
-:deep(.el-button) {
-  padding: 12px 24px;
-  font-size: 1rem;
-  transition: all 0.3s ease;
-}
-
-:deep(.el-button.active) {
-  background-color: #409EFF;
-  color: white;
-  border-color: #409EFF;
-}
-
-.match-button-container {
-  position: absolute;
-  left: 50%;
-  top: 50%;
-  transform: translate(-50%, -50%);
-  z-index: 10;
-}
-
-.match-button {
-  padding: 20px 40px;
-  font-size: 1.2rem;
-  border-radius: 50px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-}
-
-.result-container {
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
+::-webkit-scrollbar-track {
   background: rgba(0, 0, 0, 0.1);
-  backdrop-filter: blur(5px);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  z-index: 1000;
+  border-radius: 4px;
 }
 
-.result-card {
-  background: white;
-  border-radius: 16px;
-  padding: 2rem;
-  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.1);
-  width: 80%;
-  max-width: 1000px;
-  margin: auto;
-  overflow-y: auto;
-  max-height: 90vh;
+::-webkit-scrollbar-thumb {
+  background: rgba(0, 0, 0, 0.2);
+  border-radius: 4px;
 }
 
-.result-header {
-  text-align: center;
-  margin-bottom: 2rem;
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(0, 0, 0, 0.3);
 }
 
-.result-header h2 {
-  color: #2c3e50;
-  font-size: 2rem;
-  margin-bottom: 2rem;
+/* 暗色模式滚动条 */
+.dark ::-webkit-scrollbar-track {
+  background: rgba(255, 255, 255, 0.1);
 }
 
-.personality-types {
-  display: flex;
-  justify-content: space-around;
-  align-items: center;
-  margin: 2rem 0;
+.dark ::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.2);
 }
 
-.type-card {
-  background: #f8f9fa;
-  padding: 1rem;
-  border-radius: 12px;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  min-width: 150px;
+.dark ::-webkit-scrollbar-thumb:hover {
+  background: rgba(255, 255, 255, 0.3);
 }
 
-.type-label {
-  color: #666;
-  font-size: 0.9rem;
-  margin-bottom: 0.5rem;
+/* Element Plus 进度条样式覆盖 */
+:deep(.el-progress-bar__outer) {
+  background-color: rgba(0, 0, 0, 0.1);
+  border-radius: 9999px;
 }
 
-.type-value {
-  font-size: 2rem;
-  font-weight: bold;
-  color: #409EFF;
-}
-
-.match-percentage {
-  position: relative;
-}
-
-.match-analysis {
-  padding: 1rem;
-  display: flex;
-  flex-direction: column;
-  gap: 1.5rem;
-}
-
-.analysis-section {
-  margin-bottom: 0;
-}
-
-:deep(.el-card) {
-  border-radius: 12px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
-  transition: all 0.3s ease;
-}
-
-:deep(.el-card:hover) {
-  transform: translateY(-2px);
-  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.1);
-}
-
-.card-header {
-  display: flex;
-  align-items: center;
-  padding: 0;
-}
-
-.card-header h3 {
-  margin: 0;
-  font-size: 1.2rem;
-  color: #2c3e50;
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-}
-
-:deep(.el-card__header) {
-  padding: 15px 20px;
-  border-bottom: 1px solid #ebeef5;
-  background: #f8f9fa;
-  border-radius: 12px 12px 0 0;
-}
-
-:deep(.el-card__body) {
-  padding: 20px;
-}
-
-.analysis-section h4 {
-  color: #409EFF;
-  margin: 1rem 0 0.5rem;
-  font-size: 1rem;
-}
-
-.analysis-section p {
-  color: #4a5568;
-  line-height: 1.6;
-  margin: 0.5rem 0;
-  text-align: justify;
-}
-
-.analysis-section div + div {
-  margin-top: 1.5rem;
-}
-
-.action-buttons {
-  display: flex;
-  justify-content: center;
-  gap: 1rem;
-  margin-top: 2rem;
-}
-
-.reset-button, .export-button {
-  min-width: 120px;
+:deep(.el-progress-bar__inner) {
+  background-color: #3b82f6;
+  border-radius: 9999px;
+  transition: width 0.6s ease;
 }
 
 :deep(.el-progress__text) {
-  font-size: 1rem !important;
+  font-size: 1.5rem !important;
   font-weight: bold;
-  color: #409EFF;
-}
-
-@media (max-width: 768px) {
-  .result-card {
-    width: 95%;
-    padding: 1rem;
-  }
-
-  .personality-types {
-    flex-direction: column;
-    gap: 1rem;
-  }
-
-  .type-card {
-    width: 100%;
-  }
-
-  .match-percentage {
-    margin: 2rem 0;
-  }
-
-  .match-analysis {
-    padding: 0.5rem;
-    gap: 1rem;
-  }
-
-  :deep(.el-card__header) {
-    padding: 12px 15px;
-  }
-
-  :deep(.el-card__body) {
-    padding: 15px;
-  }
-
-  .card-header h3 {
-    font-size: 1.1rem;
-  }
+  color: #3b82f6;
 }
 </style> 
