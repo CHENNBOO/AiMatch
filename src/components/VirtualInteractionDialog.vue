@@ -82,6 +82,7 @@ import { ref, computed, nextTick, watch, onMounted } from 'vue'
 import { Promotion, Avatar, UserFilled } from '@element-plus/icons-vue'
 import { ElMessage } from 'element-plus'
 import axios from 'axios'
+import { checkForbiddenWords, getForbiddenWordType } from '../config/forbiddenWords'
 
 const props = defineProps<{
   modelValue: boolean
@@ -129,6 +130,27 @@ const sendMessage = async () => {
   if (!inputMessage.value.trim() || isLoading.value) return
 
   const userMessage = inputMessage.value.trim()
+  
+  // 检查违禁词
+  if (checkForbiddenWords(userMessage)) {
+    const types = getForbiddenWordType(userMessage)
+    const typeMessages = {
+      '色情': '请保持健康的交流环境',
+      '政治': '请避免讨论敏感话题',
+      '代码': '请专注于性格匹配相关的交流',
+      '敏感': '请避免讨论敏感话题'
+    }
+    
+    const warningMessage = types.map(type => typeMessages[type]).join('，')
+    ElMessage({
+      message: `消息包含${types.join('、')}相关违禁词。${warningMessage}`,
+      type: 'warning',
+      duration: 3000,
+      showClose: true
+    })
+    return
+  }
+
   messages.value.push({ type: 'user', content: userMessage })
   inputMessage.value = ''
   isLoading.value = true
@@ -140,7 +162,19 @@ const sendMessage = async () => {
       personality: personality
     })
     
-    messages.value.push({ type: 'ai', content: response.data.reply })
+    // 检查AI回复是否包含违禁词
+    if (checkForbiddenWords(response.data.reply)) {
+      const types = getForbiddenWordType(response.data.reply)
+      ElMessage({
+        message: `AI回复包含${types.join('、')}相关违禁词，已自动过滤`,
+        type: 'warning',
+        duration: 3000,
+        showClose: true
+      })
+      messages.value.push({ type: 'ai', content: '抱歉，我的回复可能包含不当内容，请重新提问。' })
+    } else {
+      messages.value.push({ type: 'ai', content: response.data.reply })
+    }
   } catch (error) {
     console.error('发送消息失败:', error)
     ElMessage.error('发送消息失败，请稍后重试')
