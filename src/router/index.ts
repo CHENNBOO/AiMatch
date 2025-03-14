@@ -1,5 +1,5 @@
 import { createRouter, createWebHistory } from 'vue-router'
-import Welcome from '../components/Welcome.vue'
+import Home from '../components/Home.vue'
 import MbtiMatch from '../components/MbtiMatch.vue'
 import EventPlanner from '../components/EventPlanner.vue'
 import MentalHealth from '../components/MentalHealth.vue'
@@ -9,7 +9,8 @@ import VirtualInteraction from '../components/VirtualInteraction.vue'
 const routes = [
   {
     path: '/',
-    redirect: '/mbti'
+    name: 'home',
+    component: Home
   },
   {
     path: '/mbti',
