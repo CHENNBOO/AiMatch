@@ -1,6 +1,7 @@
 <template>
   <div class="relative min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 dark:from-gray-900 dark:to-gray-800 overflow-hidden">
     <PersonalitySettingsDialog v-model="showDialog" />
+    <PersonalityAnalysisDialog v-model="showAnalysisDialog" />
     <!-- 背景装饰 -->
     <div class="fixed inset-0 overflow-hidden pointer-events-none">
       <div class="absolute -top-1/2 -left-1/2 w-full h-full bg-gradient-to-br from-blue-500/10 to-purple-500/10 rounded-full blur-3xl"></div>
@@ -33,8 +34,10 @@
         </router-link>
 
         <!-- 性格匹配分析 -->
-        <router-link to="/personality-analysis" 
-          class="group relative bg-white/80 dark:bg-gray-800/80 backdrop-blur-xl rounded-2xl p-8 shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1 animate__animated animate__fadeIn animate__delay-2s">
+        <router-link to="#" 
+          class="group relative bg-white/80 dark:bg-gray-800/80 backdrop-blur-xl rounded-2xl p-8 shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1 animate__animated animate__fadeIn animate__delay-2s"
+          @click.prevent="showAnalysisDialog = true"
+        >
           <div class="absolute inset-0 bg-gradient-to-br from-purple-500/0 to-purple-500/0 group-hover:from-purple-500/5 group-hover:to-purple-500/10 rounded-2xl transition-all duration-300"></div>
           <div class="relative">
             <el-icon class="text-4xl mb-4 text-black dark:text-white"><Connection /></el-icon>
@@ -97,10 +100,12 @@ import { UserFilled, Calendar, Sunny, ChatDotRound, Avatar, Connection } from '@
 import { onMounted, ref } from 'vue'
 import { useRouter } from 'vue-router'
 import PersonalitySettingsDialog from './PersonalitySettingsDialog.vue'
+import PersonalityAnalysisDialog from './PersonalityAnalysisDialog.vue'
 import 'animate.css'
 
 const router = useRouter()
 const showDialog = ref(false)
+const showAnalysisDialog = ref(false)
 
 const checkPersonalitySettings = () => {
   // 检查第一个人的设置
