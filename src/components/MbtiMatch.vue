@@ -392,7 +392,6 @@ const getFullType = (person: PersonType) => {
 }
 
 const getTypeDescription = (person: PersonType) => {
-  // 这里可以添加每种类型的简短描述
   return '点击了解更多'
 }
 
@@ -412,15 +411,13 @@ const calculateMatch = async () => {
     const type1 = getFullType(person1.value)
     const type2 = getFullType(person2.value)
     
-    
     const response = await axios.post('/api/mbti-match', {
-      type1,
-      type2
+      person1: person1.value,
+      person2: person2.value
     })
-    console.log('response====', response);
 
-// 解析返回的数据
-const sections = response.data.description.split('\n\n')
+    // 解析返回的数据
+    const sections = response.data.description.split('\n\n')
     const parsedDesc = {
       overall: '',
       communication: '',
@@ -455,12 +452,6 @@ const sections = response.data.description.split('\n\n')
     parsedDescription.value = parsedDesc
     currentStep.value = 3
     showResult.value = true
-    // if (response.data.status === 'success') {
-    //   matchPercentage.value = response.data.matchPercentage
-    //   parsedDescription.value = response.data.description
-    //   currentStep.value = 3
-    //   showResult.value = true
-    // }
   } catch (error) {
     ElMessage.error('分析过程中出现错误，请重试')
     console.error('Error:', error)
@@ -499,12 +490,10 @@ const closeResult = () => {
 }
 
 const exportReport = () => {
-  // 实现导出报告功能
   ElMessage.success('报告已导出')
 }
 
 const shareResult = () => {
-  // 实现分享功能
   ElMessage.success('分享链接已复制到剪贴板')
 }
 </script>
@@ -588,4 +577,4 @@ const shareResult = () => {
 .fade-leave-to {
   opacity: 0;
 }
-</style> 
+</style>
