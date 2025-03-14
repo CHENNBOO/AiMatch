@@ -30,7 +30,16 @@
             <p class="text-black/70 dark:text-white/70">探索性格类型的完美匹配</p>
           </div>
         </router-link>
-
+        <!-- 虚拟互动 -->
+        <router-link to="/virtual-interaction"
+          class="group relative bg-white/80 dark:bg-gray-800/80 backdrop-blur-xl rounded-2xl p-8 shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1 animate__animated animate__fadeIn animate__delay-2s">
+          <div class="absolute inset-0 bg-gradient-to-br from-pink-500/0 to-pink-500/0 group-hover:from-pink-500/5 group-hover:to-pink-500/10 rounded-2xl transition-all duration-300"></div>
+          <div class="relative">
+            <el-icon class="text-4xl mb-4 text-black dark:text-white"><Avatar /></el-icon>
+            <h3 class="text-2xl font-semibold text-black dark:text-white mb-3">虚拟互动</h3>
+            <p class="text-black/70 dark:text-white/70">智能虚拟伙伴陪伴交流</p>
+          </div>
+        </router-link>
         <!-- 活动策划 -->
         <router-link to="/event-planner"
           class="group relative bg-white/80 dark:bg-gray-800/80 backdrop-blur-xl rounded-2xl p-8 shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1 animate__animated animate__fadeIn animate__delay-2s">
@@ -64,16 +73,7 @@
           </div>
         </router-link>
 
-        <!-- 虚拟互动 -->
-        <router-link to="/virtual-interaction"
-          class="group relative bg-white/80 dark:bg-gray-800/80 backdrop-blur-xl rounded-2xl p-8 shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1 animate__animated animate__fadeIn animate__delay-2s">
-          <div class="absolute inset-0 bg-gradient-to-br from-pink-500/0 to-pink-500/0 group-hover:from-pink-500/5 group-hover:to-pink-500/10 rounded-2xl transition-all duration-300"></div>
-          <div class="relative">
-            <el-icon class="text-4xl mb-4 text-black dark:text-white"><Avatar /></el-icon>
-            <h3 class="text-2xl font-semibold text-black dark:text-white mb-3">虚拟互动</h3>
-            <p class="text-black/70 dark:text-white/70">智能虚拟伙伴陪伴交流</p>
-          </div>
-        </router-link>
+
       </div>
     </div>
   </div>

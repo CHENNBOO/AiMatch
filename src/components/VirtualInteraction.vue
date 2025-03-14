@@ -19,7 +19,7 @@
       <!-- 标题区 -->
       <div class="text-center mb-12 mt-8">
         <h1 class="text-4xl font-bold text-black dark:text-white mb-4">虚拟互动</h1>
-        <p class="text-xl text-black/70 dark:text-white/70">基于MBTI性格特征的智能对话体验</p>
+        <p class="text-xl text-black/70 dark:text-white/70">可DIY的智能对话体验</p>
       </div>
 
       <!-- 设置区域 -->
