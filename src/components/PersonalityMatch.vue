@@ -23,9 +23,6 @@
         <p class="text-black/70 dark:text-white/70 text-lg">选择双方性格类型，点击设置完成按钮，即可开启互动场景</p>
       </div>
 
-      <!-- 步骤指示器 -->
-      <!-- 移除步骤指示器部分 -->
-
       <!-- 选择区域 -->
       <div class="grid grid-cols-1 md:grid-cols-2 gap-8 mb-12">
         <!-- 左侧选择区 -->
@@ -368,14 +365,15 @@
       </div>
 
       <!-- 设置完成按钮 -->
-      <div class="flex justify-center mt-8">
-        <el-button 
-          type="primary" 
-          @click="calculateMatch" 
-          class="!bg-gradient-to-r from-blue-500 to-purple-500 hover:!opacity-90 border-none !text-white px-8 text-lg h-12 !rounded-xl"
+      <div class="flex justify-center mt-12">
+        <el-button
+          @click="saveAndRedirect"
+          class="flex items-center space-x-2 !bg-gradient-to-r from-blue-500 to-purple-500 hover:!opacity-90 border-none !text-white px-12 py-4 text-lg !rounded-xl shadow-lg hover:shadow-xl transition-all duration-300"
+          :disabled="!isFirstPersonComplete || !isSecondPersonComplete"
           size="large"
         >
-          设置完成
+          <el-icon class="text-xl"><Check /></el-icon>
+          <span class="text-lg">设置完成</span>
         </el-button>
       </div>
 
@@ -578,10 +576,12 @@ import {
   Delete,
   UserFilled,
   Avatar,
-  Calendar
+  Calendar,
+  Check
 } from '@element-plus/icons-vue'
 import 'animate.css'
 import PersonalityIncompleteDialog from './PersonalityIncompleteDialog.vue'
+import { useRouter } from 'vue-router'
 
 // 类型定义
 interface PersonType {
@@ -693,6 +693,8 @@ const customType2 = ref('')
 const showFunctionDialog = ref(false)
 const activeArea = ref<'left' | 'right' | null>(null)
 const showIncompleteDialog = ref(false)
+
+const router = useRouter()
 
 // 计算属性
 const isFirstPersonComplete = computed(() => {
@@ -876,6 +878,82 @@ const checkPersonalityComplete = () => {
   }
   return true
 }
+
+// 保存并跳转函数
+const saveAndRedirect = () => {
+  if (!isFirstPersonComplete.value || !isSecondPersonComplete.value) {
+    showIncompleteDialog.value = true
+    return
+  }
+
+  // 保存第一个人的MBTI类型
+  const person1Type = `${person1.value.EI}${person1.value.SN}${person1.value.TF}${person1.value.JP}`
+  localStorage.setItem('person1Type', person1Type)
+  localStorage.setItem('person1OtherTypes', JSON.stringify(person1.value.otherTypes))
+  if (person1.value.customType) {
+    localStorage.setItem('person1CustomType', person1.value.customType)
+  }
+
+  // 保存第二个人的MBTI类型
+  const person2Type = `${person2.value.EI}${person2.value.SN}${person2.value.TF}${person2.value.JP}`
+  localStorage.setItem('person2Type', person2Type)
+  localStorage.setItem('person2OtherTypes', JSON.stringify(person2.value.otherTypes))
+  if (person2.value.customType) {
+    localStorage.setItem('person2CustomType', person2.value.customType)
+  }
+
+  // 跳转到首页
+  router.push('/')
+}
+
+// 初始化函数
+const initializeFromLocalStorage = () => {
+  // 读取第一个人的设置
+  const person1MBTIType = localStorage.getItem('person1Type')
+  const person1OtherTypesStr = localStorage.getItem('person1OtherTypes')
+  const person1CustomTypeStr = localStorage.getItem('person1CustomType')
+
+  if (person1MBTIType) {
+    person1.value.EI = person1MBTIType[0]
+    person1.value.SN = person1MBTIType[1]
+    person1.value.TF = person1MBTIType[2]
+    person1.value.JP = person1MBTIType[3]
+  }
+
+  if (person1OtherTypesStr) {
+    person1.value.otherTypes = JSON.parse(person1OtherTypesStr)
+  }
+
+  if (person1CustomTypeStr) {
+    person1.value.customType = person1CustomTypeStr
+    customType1.value = person1CustomTypeStr
+  }
+
+  // 读取第二个人的设置
+  const person2MBTIType = localStorage.getItem('person2Type')
+  const person2OtherTypesStr = localStorage.getItem('person2OtherTypes')
+  const person2CustomTypeStr = localStorage.getItem('person2CustomType')
+
+  if (person2MBTIType) {
+    person2.value.EI = person2MBTIType[0]
+    person2.value.SN = person2MBTIType[1]
+    person2.value.TF = person2MBTIType[2]
+    person2.value.JP = person2MBTIType[3]
+  }
+
+  if (person2OtherTypesStr) {
+    person2.value.otherTypes = JSON.parse(person2OtherTypesStr)
+  }
+
+  if (person2CustomTypeStr) {
+    person2.value.customType = person2CustomTypeStr
+    customType2.value = person2CustomTypeStr
+  }
+}
+
+onMounted(() => {
+  initializeFromLocalStorage()
+})
 </script>
 
 <style>

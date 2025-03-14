@@ -21,7 +21,7 @@
 
       <!-- 功能按钮网格 -->
       <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 max-w-6xl mx-auto">
-        <!-- 性格匹配 -->
+        <!-- 性格设置 -->
         <router-link to="/personality" 
           class="group relative bg-white/80 dark:bg-gray-800/80 backdrop-blur-xl rounded-2xl p-8 shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1 animate__animated animate__fadeIn animate__delay-2s">
           <div class="absolute inset-0 bg-gradient-to-br from-blue-500/0 to-blue-500/0 group-hover:from-blue-500/5 group-hover:to-blue-500/10 rounded-2xl transition-all duration-300"></div>
@@ -31,6 +31,18 @@
             <p class="text-black/70 dark:text-white/70">设置性格类型，探索性格人群的互动场景</p>
           </div>
         </router-link>
+
+        <!-- 性格匹配分析 -->
+        <router-link to="/personality-analysis" 
+          class="group relative bg-white/80 dark:bg-gray-800/80 backdrop-blur-xl rounded-2xl p-8 shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1 animate__animated animate__fadeIn animate__delay-2s">
+          <div class="absolute inset-0 bg-gradient-to-br from-purple-500/0 to-purple-500/0 group-hover:from-purple-500/5 group-hover:to-purple-500/10 rounded-2xl transition-all duration-300"></div>
+          <div class="relative">
+            <el-icon class="text-4xl mb-4 text-black dark:text-white"><Connection /></el-icon>
+            <h3 class="text-2xl font-semibold text-black dark:text-white mb-3">性格匹配分析</h3>
+            <p class="text-black/70 dark:text-white/70">深入分析不同性格类型的匹配程度</p>
+          </div>
+        </router-link>
+
         <!-- 虚拟互动 -->
         <router-link to="/virtual-interaction"
           class="group relative bg-white/80 dark:bg-gray-800/80 backdrop-blur-xl rounded-2xl p-8 shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1 animate__animated animate__fadeIn animate__delay-2s">
@@ -81,7 +93,7 @@
 </template>
 
 <script setup lang="ts">
-import { UserFilled, Calendar, Sunny, ChatDotRound, Avatar } from '@element-plus/icons-vue'
+import { UserFilled, Calendar, Sunny, ChatDotRound, Avatar, Connection } from '@element-plus/icons-vue'
 import { onMounted, ref } from 'vue'
 import { useRouter } from 'vue-router'
 import PersonalitySettingsDialog from './PersonalitySettingsDialog.vue'
@@ -91,9 +103,28 @@ const router = useRouter()
 const showDialog = ref(false)
 
 const checkPersonalitySettings = () => {
+  // 检查第一个人的设置
   const person1Type = localStorage.getItem('person1Type')
+  const person1OtherTypes = localStorage.getItem('person1OtherTypes')
+  const person1CustomType = localStorage.getItem('person1CustomType')
+  
+  // 检查第二个人的设置
   const person2Type = localStorage.getItem('person2Type')
-  if (!person1Type || !person2Type) {
+  const person2OtherTypes = localStorage.getItem('person2OtherTypes')
+  const person2CustomType = localStorage.getItem('person2CustomType')
+
+  // 检查第一个人是否有任何类型设置
+  const hasPerson1Settings = person1Type || 
+    (person1OtherTypes && JSON.parse(person1OtherTypes).length > 0) || 
+    person1CustomType
+
+  // 检查第二个人是否有任何类型设置
+  const hasPerson2Settings = person2Type || 
+    (person2OtherTypes && JSON.parse(person2OtherTypes).length > 0) || 
+    person2CustomType
+
+  // 如果任何一个人没有设置，显示对话框
+  if (!hasPerson1Settings || !hasPerson2Settings) {
     showDialog.value = true
   }
 }
