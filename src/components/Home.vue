@@ -3,6 +3,7 @@
     <PersonalitySettingsDialog v-model="showDialog" />
     <PersonalityAnalysisDialog v-model="showAnalysisDialog" />
     <PersonalityIncompleteDialog v-model="showIncompleteDialog" />
+    <VirtualInteractionDialog v-model="showVirtualInteractionDialog" />
     <!-- 背景装饰 -->
     <div class="fixed inset-0 overflow-hidden pointer-events-none">
       <div class="absolute -top-1/2 -left-1/2 w-full h-full bg-gradient-to-br from-blue-500/10 to-purple-500/10 rounded-full blur-3xl"></div>
@@ -59,64 +60,26 @@
             <p class="text-black/70 dark:text-white/70">智能虚拟伙伴陪伴交流</p>
           </div>
         </router-link>
-        <!-- 活动策划 -->
-        <router-link to="#"
-          class="group relative bg-white/80 dark:bg-gray-800/80 backdrop-blur-xl rounded-2xl p-8 shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1 animate__animated animate__fadeIn animate__delay-2s"
-          @click="(e) => handleFeatureClick(e, '/event-planner')"
-        >
-          <div class="absolute inset-0 bg-gradient-to-br from-green-500/0 to-green-500/0 group-hover:from-green-500/5 group-hover:to-green-500/10 rounded-2xl transition-all duration-300"></div>
-          <div class="relative">
-            <el-icon class="text-4xl mb-4 text-black dark:text-white"><Calendar /></el-icon>
-            <h3 class="text-2xl font-semibold text-black dark:text-white mb-3">活动策划</h3>
-            <p class="text-black/70 dark:text-white/70">基于性格特征的个性化活动方案</p>
-          </div>
-        </router-link>
-
-        <!-- 心理健康 -->
-        <router-link to="#"
-          class="group relative bg-white/80 dark:bg-gray-800/80 backdrop-blur-xl rounded-2xl p-8 shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1 animate__animated animate__fadeIn animate__delay-2s"
-          @click="(e) => handleFeatureClick(e, '/mental-health')"
-        >
-          <div class="absolute inset-0 bg-gradient-to-br from-purple-500/0 to-purple-500/0 group-hover:from-purple-500/5 group-hover:to-purple-500/10 rounded-2xl transition-all duration-300"></div>
-          <div class="relative">
-            <el-icon class="text-4xl mb-4 text-black dark:text-white"><Sunny /></el-icon>
-            <h3 class="text-2xl font-semibold text-black dark:text-white mb-3">心理健康</h3>
-            <p class="text-black/70 dark:text-white/70">专业的心理健康评估与建议</p>
-          </div>
-        </router-link>
-
-        <!-- 沟通指导 -->
-        <router-link to="#"
-          class="group relative bg-white/80 dark:bg-gray-800/80 backdrop-blur-xl rounded-2xl p-8 shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1 animate__animated animate__fadeIn animate__delay-2s"
-          @click="(e) => handleFeatureClick(e, '/communication-guide')"
-        >
-          <div class="absolute inset-0 bg-gradient-to-br from-orange-500/0 to-orange-500/0 group-hover:from-orange-500/5 group-hover:to-orange-500/10 rounded-2xl transition-all duration-300"></div>
-          <div class="relative">
-            <el-icon class="text-4xl mb-4 text-black dark:text-white"><ChatDotRound /></el-icon>
-            <h3 class="text-2xl font-semibold text-black dark:text-white mb-3">沟通指导</h3>
-            <p class="text-black/70 dark:text-white/70">提升沟通技巧的智能助手</p>
-          </div>
-        </router-link>
-
-
       </div>
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
-import { UserFilled, Calendar, Sunny, ChatDotRound, Avatar, Connection } from '@element-plus/icons-vue'
+import { UserFilled, Avatar, Connection } from '@element-plus/icons-vue'
 import { onMounted, ref } from 'vue'
 import { useRouter } from 'vue-router'
 import PersonalitySettingsDialog from './PersonalitySettingsDialog.vue'
 import PersonalityAnalysisDialog from './PersonalityAnalysisDialog.vue'
 import PersonalityIncompleteDialog from './PersonalityIncompleteDialog.vue'
+import VirtualInteractionDialog from './VirtualInteractionDialog.vue'
 import 'animate.css'
 
 const router = useRouter()
 const showDialog = ref(false)
 const showAnalysisDialog = ref(false)
 const showIncompleteDialog = ref(false)
+const showVirtualInteractionDialog = ref(false)
 
 const checkPersonalitySettings = () => {
   // 检查第一个人的设置
@@ -149,6 +112,8 @@ const handleFeatureClick = (e: Event, path: string) => {
   } else {
     if (path === '/personality-analysis') {
       showAnalysisDialog.value = true
+    } else if (path === '/virtual-interaction') {
+      showVirtualInteractionDialog.value = true
     } else {
       router.push(path)
     }
