@@ -1,6 +1,6 @@
 import { createRouter, createWebHistory } from 'vue-router'
 import Home from '../components/Home.vue'
-import MbtiMatch from '../components/MbtiMatch.vue'
+import PersonalityMatch from '../components/PersonalityMatch.vue'
 import EventPlanner from '../components/EventPlanner.vue'
 import MentalHealth from '../components/MentalHealth.vue'
 import CommunicationGuide from '../components/CommunicationGuide.vue'
@@ -13,9 +13,9 @@ const routes = [
     component: Home
   },
   {
-    path: '/mbti',
-    name: 'MBTI性格匹配',
-    component: MbtiMatch
+    path: '/personality',
+    name: '性格匹配',
+    component: PersonalityMatch
   },
   {
     path: '/event-planner',

@@ -1,5 +1,6 @@
 <template>
   <div class="relative min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 dark:from-gray-900 dark:to-gray-800 overflow-hidden">
+    <PersonalitySettingsDialog v-model="showDialog" />
     <!-- 背景装饰 -->
     <div class="fixed inset-0 overflow-hidden pointer-events-none">
       <div class="absolute -top-1/2 -left-1/2 w-full h-full bg-gradient-to-br from-blue-500/10 to-purple-500/10 rounded-full blur-3xl"></div>
@@ -20,14 +21,14 @@
 
       <!-- 功能按钮网格 -->
       <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 max-w-6xl mx-auto">
-        <!-- MBTI匹配 -->
-        <router-link to="/mbti" 
+        <!-- 性格匹配 -->
+        <router-link to="/personality" 
           class="group relative bg-white/80 dark:bg-gray-800/80 backdrop-blur-xl rounded-2xl p-8 shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1 animate__animated animate__fadeIn animate__delay-2s">
           <div class="absolute inset-0 bg-gradient-to-br from-blue-500/0 to-blue-500/0 group-hover:from-blue-500/5 group-hover:to-blue-500/10 rounded-2xl transition-all duration-300"></div>
           <div class="relative">
             <el-icon class="text-4xl mb-4 text-black dark:text-white"><UserFilled /></el-icon>
-            <h3 class="text-2xl font-semibold text-black dark:text-white mb-3">MBTI匹配</h3>
-            <p class="text-black/70 dark:text-white/70">探索性格类型的完美匹配</p>
+            <h3 class="text-2xl font-semibold text-black dark:text-white mb-3">性格设置</h3>
+            <p class="text-black/70 dark:text-white/70">设置性格类型，探索性格人群的互动场景</p>
           </div>
         </router-link>
         <!-- 虚拟互动 -->
@@ -81,7 +82,34 @@
 
 <script setup lang="ts">
 import { UserFilled, Calendar, Sunny, ChatDotRound, Avatar } from '@element-plus/icons-vue'
+import { onMounted, ref } from 'vue'
+import { useRouter } from 'vue-router'
+import PersonalitySettingsDialog from './PersonalitySettingsDialog.vue'
 import 'animate.css'
+
+const router = useRouter()
+const showDialog = ref(false)
+
+const checkPersonalitySettings = () => {
+  const person1Type = localStorage.getItem('person1Type')
+  const person2Type = localStorage.getItem('person2Type')
+  if (!person1Type || !person2Type) {
+    showDialog.value = true
+  }
+}
+
+const closeDialog = () => {
+  showDialog.value = false
+}
+
+const goToPersonalitySettings = () => {
+  showDialog.value = false
+  router.push('/personality')
+}
+
+onMounted(() => {
+  checkPersonalitySettings()
+})
 </script>
 
 <style>

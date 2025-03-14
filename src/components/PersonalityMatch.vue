@@ -1,5 +1,6 @@
 <template>
   <div class="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 dark:from-gray-900 dark:to-gray-800">
+    <PersonalityIncompleteDialog v-model="showIncompleteDialog" />
     <!-- 背景装饰 -->
     <div class="fixed inset-0 overflow-hidden pointer-events-none">
       <div class="absolute -top-1/2 -left-1/2 w-full h-full bg-gradient-to-br from-blue-500/10 to-purple-500/10 rounded-full blur-3xl"></div>
@@ -19,7 +20,7 @@
       <!-- 标题区 -->
       <div class="text-center mb-12">
         <h1 class="text-4xl font-bold text-black dark:text-white mb-4">性格匹配</h1>
-        <p class="text-black/70 dark:text-white/70 text-lg">探索不同性格类型之间的互动与和谐</p>
+        <p class="text-black/70 dark:text-white/70 text-lg">选择双方性格类型，点击设置完成按钮，即可开启互动场景</p>
       </div>
 
       <!-- 步骤指示器 -->
@@ -367,11 +368,11 @@
       </div>
 
       <!-- 设置完成按钮 -->
-      <div class="flex justify-center mt-8" v-if="isFirstPersonComplete && isSecondPersonComplete">
+      <div class="flex justify-center mt-8">
         <el-button 
           type="primary" 
           @click="calculateMatch" 
-          class="!text-blue-500 hover:!text-white px-8 text-lg"
+          class="!bg-gradient-to-r from-blue-500 to-purple-500 hover:!opacity-90 border-none !text-white px-8 text-lg h-12 !rounded-xl"
           size="large"
         >
           设置完成
@@ -562,7 +563,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed } from 'vue'
+import { ref, computed, onMounted } from 'vue'
 import axios from 'axios'
 import { ElLoading, ElMessage } from 'element-plus'
 import { 
@@ -580,6 +581,7 @@ import {
   Calendar
 } from '@element-plus/icons-vue'
 import 'animate.css'
+import PersonalityIncompleteDialog from './PersonalityIncompleteDialog.vue'
 
 // 类型定义
 interface PersonType {
@@ -690,6 +692,7 @@ const customType1 = ref('')
 const customType2 = ref('')
 const showFunctionDialog = ref(false)
 const activeArea = ref<'left' | 'right' | null>(null)
+const showIncompleteDialog = ref(false)
 
 // 计算属性
 const isFirstPersonComplete = computed(() => {
@@ -753,12 +756,13 @@ const getTypeDescription = (person: PersonType) => {
   return '点击了解更多'
 }
 
-const calculateMatch = async () => {
-  if (!isSelectionComplete.value) {
-    ElMessage.warning('请完成所有性格类型的选择')
-    return
-  }
-
+const calculateMatch = () => {
+  if (!checkPersonalityComplete()) return
+  
+  // 保存到localStorage
+  localStorage.setItem('person1Type', JSON.stringify(person1.value))
+  localStorage.setItem('person2Type', JSON.stringify(person2.value))
+  
   showFunctionDialog.value = true
 }
 
@@ -863,6 +867,14 @@ const clearPerson = (person: number) => {
     }
     customType2.value = ''
   }
+}
+
+const checkPersonalityComplete = () => {
+  if (!isFirstPersonComplete.value || !isSecondPersonComplete.value) {
+    showIncompleteDialog.value = true
+    return false
+  }
+  return true
 }
 </script>
 
