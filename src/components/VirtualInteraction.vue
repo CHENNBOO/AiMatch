@@ -1,92 +1,158 @@
 <template>
-  <div class="virtual-interaction">
-    <div class="setup-section">
-      <el-form :model="form" label-width="120px">
-        <el-form-item label="你的MBTI类型">
-          <el-select v-model="form.selfProfile.mbtiType" placeholder="请选择你的MBTI类型">
-            <el-option
-              v-for="type in mbtiTypes"
-              :key="type"
-              :label="type"
-              :value="type"
-            />
-          </el-select>
-        </el-form-item>
+  <div class="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 dark:from-gray-900 dark:to-gray-800 overflow-hidden">
+    <!-- 背景装饰 -->
+    <div class="fixed inset-0 overflow-hidden pointer-events-none">
+      <div class="absolute -top-1/2 -left-1/2 w-full h-full bg-gradient-to-br from-blue-500/10 to-purple-500/10 rounded-full blur-3xl"></div>
+      <div class="absolute -bottom-1/2 -right-1/2 w-full h-full bg-gradient-to-br from-pink-500/10 to-orange-500/10 rounded-full blur-3xl"></div>
+    </div>
 
-        <el-form-item label="对方的类型">
-          <el-select v-model="form.partnerProfile.mbtiType" placeholder="请选择对方的类型">
-            <el-option-group label="MBTI类型">
+    <!-- 主要内容区 -->
+    <div class="relative container mx-auto px-4 py-8">
+      <!-- 返回按钮 -->
+      <router-link to="/" class="absolute left-4 top-4">
+        <el-button class="flex items-center space-x-2 !bg-white/80 dark:!bg-gray-800/80 backdrop-blur-xl shadow-lg hover:shadow-xl transition-all duration-300">
+          <el-icon><Back /></el-icon>
+          <span>返回首页</span>
+        </el-button>
+      </router-link>
+
+      <!-- 标题区 -->
+      <div class="text-center mb-12 mt-8">
+        <h1 class="text-4xl font-bold text-black dark:text-white mb-4">虚拟互动</h1>
+        <p class="text-xl text-black/70 dark:text-white/70">基于MBTI性格特征的智能对话体验</p>
+      </div>
+
+      <!-- 设置区域 -->
+      <div class="max-w-4xl mx-auto bg-white/80 dark:bg-gray-800/80 backdrop-blur-xl rounded-2xl p-8 shadow-lg mb-8">
+        <el-form :model="form" class="space-y-8">
+          <!-- MBTI类型选择 -->
+          <div class="bg-white/60 dark:bg-gray-700/60 backdrop-blur-xl rounded-xl p-6">
+            <h3 class="text-xl font-semibold text-black dark:text-white mb-4">您的MBTI类型</h3>
+            <el-select 
+              v-model="form.selfProfile.mbtiType" 
+              placeholder="请选择您的MBTI类型"
+              class="w-full !bg-white/60 dark:!bg-gray-700/60 backdrop-blur-xl rounded-xl">
               <el-option
                 v-for="type in mbtiTypes"
                 :key="type"
                 :label="type"
                 :value="type"
               />
-            </el-option-group>
-            <el-option-group label="特殊人格">
+            </el-select>
+          </div>
+
+          <!-- 对方类型选择 -->
+          <div class="bg-white/60 dark:bg-gray-700/60 backdrop-blur-xl rounded-xl p-6">
+            <h3 class="text-xl font-semibold text-black dark:text-white mb-4">对方的类型</h3>
+            <el-select 
+              v-model="form.partnerProfile.mbtiType" 
+              placeholder="请选择对方的类型"
+              class="w-full !bg-white/60 dark:!bg-gray-700/60 backdrop-blur-xl rounded-xl">
+              <el-option-group label="MBTI类型">
+                <el-option
+                  v-for="type in mbtiTypes"
+                  :key="type"
+                  :label="type"
+                  :value="type"
+                />
+              </el-option-group>
+              <el-option-group label="特殊人格">
+                <el-option
+                  v-for="type in specialPersonalities"
+                  :key="type"
+                  :label="type"
+                  :value="type"
+                />
+              </el-option-group>
+            </el-select>
+          </div>
+
+          <!-- 互动场景选择 -->
+          <div class="bg-white/60 dark:bg-gray-700/60 backdrop-blur-xl rounded-xl p-6">
+            <h3 class="text-xl font-semibold text-black dark:text-white mb-4">互动场景</h3>
+            <el-select 
+              v-model="form.selectedScenario" 
+              placeholder="请选择互动场景"
+              class="w-full !bg-white/60 dark:!bg-gray-700/60 backdrop-blur-xl rounded-xl">
               <el-option
-                v-for="type in specialPersonalities"
-                :key="type"
-                :label="type"
-                :value="type"
+                v-for="(scenario, key) in scenarios"
+                :key="key"
+                :label="scenario.title"
+                :value="key"
               />
-            </el-option-group>
-          </el-select>
-        </el-form-item>
+            </el-select>
+          </div>
+        </el-form>
+      </div>
 
-        <el-form-item label="互动场景">
-          <el-select v-model="form.selectedScenario" placeholder="请选择互动场景">
-            <el-option
-              v-for="(scenario, key) in scenarios"
-              :key="key"
-              :label="scenario.title"
-              :value="key"
-            />
-          </el-select>
-        </el-form-item>
-      </el-form>
-    </div>
+      <!-- 未完成设置提示 -->
+      <div v-if="!isReady" class="max-w-4xl mx-auto bg-white/80 dark:bg-gray-800/80 backdrop-blur-xl rounded-2xl p-8 shadow-lg text-center">
+        <el-empty description="请完成以上设置">
+          <template #description>
+            <div class="space-y-4 mt-4">
+              <div class="flex items-center space-x-2" :class="{ 'text-blue-500': form.selfProfile.mbtiType, 'text-black/50 dark:text-white/50': !form.selfProfile.mbtiType }">
+                <el-icon><CircleCheck v-if="form.selfProfile.mbtiType" /><CircleClose v-else /></el-icon>
+                <span>选择您的MBTI类型</span>
+              </div>
+              <div class="flex items-center space-x-2" :class="{ 'text-blue-500': form.partnerProfile.mbtiType, 'text-black/50 dark:text-white/50': !form.partnerProfile.mbtiType }">
+                <el-icon><CircleCheck v-if="form.partnerProfile.mbtiType" /><CircleClose v-else /></el-icon>
+                <span>选择对方的类型</span>
+              </div>
+              <div class="flex items-center space-x-2" :class="{ 'text-blue-500': form.selectedScenario, 'text-black/50 dark:text-white/50': !form.selectedScenario }">
+                <el-icon><CircleCheck v-if="form.selectedScenario" /><CircleClose v-else /></el-icon>
+                <span>选择互动场景</span>
+              </div>
+            </div>
+          </template>
+        </el-empty>
+      </div>
 
-    <div v-if="!isReady" class="setup-prompt">
-      <el-empty description="请完成以上设置">
-        <template #description>
-          <div class="setup-items">
-            <div class="setup-item" :class="{ 'is-done': form.selfProfile.mbtiType }">
-              1. 选择你的MBTI类型
+      <!-- 聊天区域 -->
+      <div v-else class="max-w-4xl mx-auto space-y-8">
+        <!-- 聊天记录 -->
+        <div class="bg-white/80 dark:bg-gray-800/80 backdrop-blur-xl rounded-2xl p-8 shadow-lg">
+          <div class="chat-container h-[400px] overflow-y-auto pr-4" ref="chatContainer">
+            <div v-for="(msg, index) in messages" :key="index" 
+                 :class="['flex mb-4', msg.isUser ? 'justify-end' : 'justify-start']">
+              <div :class="[
+                'max-w-[80%] p-4 rounded-2xl shadow-md backdrop-blur-xl',
+                msg.isUser ? 'bg-blue-500 text-white' : 'bg-white/60 dark:bg-gray-700/60 text-black dark:text-white'
+              ]">
+                <div class="whitespace-pre-wrap">{{ msg.content }}</div>
+              </div>
             </div>
-            <div class="setup-item" :class="{ 'is-done': form.partnerProfile.mbtiType }">
-              2. 选择对方的MBTI类型
-            </div>
-            <div class="setup-item" :class="{ 'is-done': form.selectedScenario }">
-              3. 选择互动场景
+            <div v-if="isLoading" class="flex justify-start mb-4">
+              <div class="bg-white/60 dark:bg-gray-700/60 max-w-[80%] p-4 rounded-2xl shadow-md backdrop-blur-xl">
+                <div class="flex items-center space-x-2">
+                  <span class="text-black/70 dark:text-white/70">正在输入</span>
+                  <span class="loading-dots"></span>
+                </div>
+              </div>
             </div>
           </div>
-        </template>
-      </el-empty>
-    </div>
+        </div>
 
-    <div v-else>
-      <div class="chat-container" ref="chatContainer">
-        <div v-for="(msg, index) in messages" :key="index" :class="['message', msg.isUser ? 'user' : 'ai']">
-          {{ msg.content }}
-        </div>
-        <div v-if="isLoading" class="message ai loading">
-          <span>正在输入</span>
-          <span class="dots">...</span>
-        </div>
-      </div>
-      
-      <div class="input-container">
-        <el-input
-          v-model="userMessage"
-          type="textarea"
-          :rows="3"
-          placeholder="输入你想说的话..."
-          :disabled="isLoading"
-          @keyup.enter.ctrl="sendMessage"
-        />
-        <div class="button-container">
-          <el-button type="primary" @click="sendMessage" :loading="isLoading">发送</el-button>
+        <!-- 输入区域 -->
+        <div class="bg-white/80 dark:bg-gray-800/80 backdrop-blur-xl rounded-2xl p-8 shadow-lg">
+          <el-input
+            v-model="userMessage"
+            type="textarea"
+            :rows="3"
+            placeholder="输入你想说的话..."
+            :disabled="isLoading"
+            @keyup.enter.ctrl="sendMessage"
+            class="!bg-white/60 dark:!bg-gray-700/60 !rounded-xl !mb-4"
+          />
+          <div class="flex justify-end">
+            <el-button 
+              type="primary"
+              @click="sendMessage"
+              :loading="isLoading"
+              class="!px-8 !py-3 !text-lg !rounded-xl !shadow-lg hover:!shadow-xl transition-all duration-300 !bg-gradient-to-r from-blue-500 to-blue-600"
+            >
+              发送
+            </el-button>
+          </div>
         </div>
       </div>
     </div>
@@ -96,6 +162,7 @@
 <script setup lang="ts">
 import { ref, onMounted, watch, computed } from 'vue'
 import { ElMessage } from 'element-plus'
+import { Back, CircleCheck, CircleClose } from '@element-plus/icons-vue'
 import axios from 'axios'
 
 interface Message {
@@ -260,127 +327,44 @@ watch(
 )
 </script>
 
-<style scoped>
-.virtual-interaction {
-  display: flex;
-  flex-direction: column;
-  height: 100%;
-  padding: 20px;
+<style>
+/* 自定义滚动条样式 */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
 }
 
-.setup-section {
-  background: white;
-  padding: 20px;
-  border-radius: 8px;
-  margin-bottom: 20px;
-  box-shadow: 0 2px 12px 0 rgba(0,0,0,0.1);
+::-webkit-scrollbar-track {
+  background: rgba(0, 0, 0, 0.1);
+  border-radius: 4px;
 }
 
-.setup-prompt {
-  flex: 1;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  background: #f5f7fa;
-  border-radius: 8px;
-  padding: 20px;
+::-webkit-scrollbar-thumb {
+  background: rgba(0, 0, 0, 0.2);
+  border-radius: 4px;
 }
 
-.setup-items {
-  margin-top: 20px;
-  text-align: left;
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(0, 0, 0, 0.3);
 }
 
-.setup-item {
-  margin: 10px 0;
-  color: #909399;
-  font-size: 14px;
+/* 暗色模式滚动条 */
+.dark ::-webkit-scrollbar-track {
+  background: rgba(255, 255, 255, 0.1);
 }
 
-.setup-item.is-done {
-  color: #67c23a;
+.dark ::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.2);
 }
 
-.setup-item.is-done::before {
-  content: '✓';
-  margin-right: 5px;
+.dark ::-webkit-scrollbar-thumb:hover {
+  background: rgba(255, 255, 255, 0.3);
 }
 
-.chat-container {
-  flex: 1;
-  overflow-y: auto;
-  padding: 20px;
-  background: #f5f7fa;
-  border-radius: 12px;
-  margin-bottom: 20px;
-  max-height: 600px;
-  box-shadow: inset 0 2px 4px rgba(0,0,0,0.05);
-}
-
-.message {
-  margin: 16px 0;
-  padding: 12px 16px;
-  border-radius: 16px;
-  max-width: 85%;
-  word-break: break-word;
-  position: relative;
-  line-height: 1.5;
-  font-size: 14px;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.08);
-  transition: all 0.3s ease;
-}
-
-.message.user {
-  background: linear-gradient(135deg, #409eff, #3a8ee6);
-  color: white;
-  margin-left: auto;
-  border-bottom-right-radius: 4px;
-}
-
-.message.user::before {
-  content: '';
-  position: absolute;
-  right: 0;
-  bottom: 0;
-  width: 12px;
-  height: 12px;
-  background: #3a8ee6;
-  border-radius: 50% 50% 0 50%;
-  transform: translate(50%, 50%);
-}
-
-.message.ai {
-  background: white;
-  color: #333;
-  margin-right: auto;
-  border-bottom-left-radius: 4px;
-}
-
-.message.ai::before {
-  content: '';
-  position: absolute;
-  left: 0;
-  bottom: 0;
-  width: 12px;
-  height: 12px;
-  background: white;
-  border-radius: 50% 50% 50% 0;
-  transform: translate(-50%, 50%);
-}
-
-.loading {
-  background: #f0f2f5;
-  box-shadow: none;
-}
-
-.loading::before {
-  display: none;
-}
-
-.dots {
-  display: inline-block;
-  animation: dots 1.5s infinite;
-  color: #909399;
+/* 加载动画 */
+.loading-dots::after {
+  content: '...';
+  animation: dots 1.5s steps(4, end) infinite;
 }
 
 @keyframes dots {
@@ -389,40 +373,36 @@ watch(
   60%, 100% { content: '...'; }
 }
 
-.input-container {
-  margin-top: auto;
-  background: white;
-  padding: 20px;
-  border-radius: 12px;
-  box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+/* Element Plus 组件样式覆盖 */
+:deep(.el-select-dropdown) {
+  @apply !bg-white/90 dark:!bg-gray-800/90 !backdrop-blur-xl !border-none !shadow-lg;
 }
 
-.button-container {
-  display: flex;
-  justify-content: flex-end;
-  margin-top: 12px;
+:deep(.el-select-dropdown__item) {
+  @apply !text-black dark:!text-white;
 }
 
-.message {
-  white-space: pre-wrap;
+:deep(.el-select-dropdown__item.hover) {
+  @apply !bg-blue-500/10;
 }
 
-/* 添加滚动条样式 */
-.chat-container::-webkit-scrollbar {
-  width: 6px;
+:deep(.el-select-dropdown__item.selected) {
+  @apply !text-blue-500;
 }
 
-.chat-container::-webkit-scrollbar-track {
-  background: #f1f1f1;
-  border-radius: 3px;
+:deep(.el-input__wrapper) {
+  @apply !shadow-none !border !border-gray-200 dark:!border-gray-700 !rounded-xl;
 }
 
-.chat-container::-webkit-scrollbar-thumb {
-  background: #c1c1c1;
-  border-radius: 3px;
+:deep(.el-input__inner) {
+  @apply !text-black dark:!text-white;
 }
 
-.chat-container::-webkit-scrollbar-thumb:hover {
-  background: #a8a8a8;
+:deep(.el-textarea__inner) {
+  @apply !bg-transparent !text-black dark:!text-white !border-gray-200 dark:!border-gray-700;
+}
+
+:deep(.el-loading-mask) {
+  @apply !bg-white/50 dark:!bg-black/50 !backdrop-blur-sm;
 }
 </style> 
