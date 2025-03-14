@@ -412,8 +412,8 @@ const calculateMatch = async () => {
     const type2 = getFullType(person2.value)
     
     const response = await axios.post('/api/mbti-match', {
-      person1: person1.value,
-      person2: person2.value
+      type1,
+      type2
     })
 
     // 解析返回的数据
