@@ -87,6 +87,7 @@ import { Promotion, Avatar, UserFilled } from '@element-plus/icons-vue'
 import { ElMessage } from 'element-plus'
 import axios from 'axios'
 import { checkForbiddenWords, getForbiddenWordType } from '../config/forbiddenWords'
+import { translatePersonalityType } from '../config/personalityTypes'
 
 const props = defineProps<{
   modelValue: boolean
@@ -146,11 +147,12 @@ const getPersonalityDescription = () => {
   
   let personality = `MBTI类型：${person2Type}`
   if (person2OtherTypes.length > 0) {
-    personality += `\n其他特征：${person2OtherTypes.join('、')}`
+    personality += `\n其他特征：${person2OtherTypes.map(type => translatePersonalityType(type)).join('、')}`
   }
   if (person2CustomType) {
     personality += `\n自定义特征：${person2CustomType}`
   }
+  console.log('person2OtherTypes',person2OtherTypes);
   
   return personality
 }
@@ -217,7 +219,7 @@ const sendMessage = async () => {
 onMounted(async () => {
   try {
     const personality = getPersonalityDescription()
-    const response = await axios.post('http://localhost:3000/api/virtual-interaction', {
+    const response = await axios.post('/api/virtual-interaction', {
       message: '你好，请介绍一下你自己',
       personality: personality
     })
