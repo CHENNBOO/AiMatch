@@ -365,7 +365,16 @@
       </div>
 
       <!-- 设置完成按钮 -->
-      <div class="flex justify-center mt-12">
+      <div class="flex justify-center mt-12 space-x-4">
+        <el-button
+          @click="resetSelection"
+          class="flex items-center space-x-2 !bg-gray-500 hover:!bg-gray-600 border-none !text-white px-12 py-4 text-lg !rounded-xl shadow-lg hover:shadow-xl transition-all duration-300"
+          size="large"
+        >
+          <el-icon class="text-xl"><Refresh /></el-icon>
+          <span class="text-lg">重置性格</span>
+        </el-button>
+
         <el-button
           @click="saveAndRedirect"
           class="flex items-center space-x-2 !bg-gradient-to-r from-blue-500 to-purple-500 hover:!opacity-90 border-none !text-white px-12 py-4 text-lg !rounded-xl shadow-lg hover:shadow-xl transition-all duration-300"
@@ -577,7 +586,8 @@ import {
   UserFilled,
   Avatar,
   Calendar,
-  Check
+  Check,
+  Refresh
 } from '@element-plus/icons-vue'
 import 'animate.css'
 import PersonalityIncompleteDialog from './PersonalityIncompleteDialog.vue'
@@ -767,6 +777,7 @@ const calculateMatch = () => {
 }
 
 const resetSelection = () => {
+  // 重置状态
   person1.value = {
     EI: '',
     SN: '',
@@ -792,6 +803,19 @@ const resetSelection = () => {
     challenges: [],
     suggestions: []
   }
+  customType1.value = ''
+  customType2.value = ''
+
+  // 清空 localStorage 中的所有性格相关数据
+  localStorage.removeItem('person1Type')
+  localStorage.removeItem('person1OtherTypes')
+  localStorage.removeItem('person1CustomType')
+  localStorage.removeItem('person2Type')
+  localStorage.removeItem('person2OtherTypes')
+  localStorage.removeItem('person2CustomType')
+
+  // 显示重置成功提示
+  ElMessage.success('性格设置已重置')
 }
 
 const closeResult = () => {
