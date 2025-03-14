@@ -83,6 +83,59 @@ app.post('/api/personality-match', async (req, res) => {
   }
 });
 
+// 虚拟互动接口
+app.post('/api/virtual-interaction', async (req, res) => {
+  try {
+    const { message, personality } = req.body;
+    
+    if (!message || !personality) {
+      return res.status(400).json({ error: '请提供消息和性格描述' });
+    }
+
+    // 构建提示词
+    const prompt = `你是一个具有以下性格特征的AI数字人：
+${personality}
+
+请以这个性格特征来回复用户的消息。保持性格特征的一致性，并给出符合该性格的回应。
+
+用户消息：${message}
+
+请给出回应：`;
+console.log('虚拟互动接口，提示词',prompt);
+    // 调用 Deepseek API
+    const response = await axios.post(DEEPSEEK_API_URL, {
+      model: 'deepseek-chat',
+      messages: [
+        {
+          role: 'system',
+          content: `你是一个具有特定性格特征的AI数字人。请始终保持这个性格特征来回复用户。`
+        },
+        {
+          role: 'user',
+          content: prompt
+        }
+      ],
+      temperature: 0.7,
+      max_tokens: 1000
+    }, {
+      headers: {
+        'Authorization': `Bearer ${DEEPSEEK_API_KEY}`,
+        'Content-Type': 'application/json'
+      }
+    });
+    console.log('虚拟互动接口，返回结果',response.data.choices[0].message.content);
+    res.json({
+      reply: response.data.choices[0].message.content
+    });
+  } catch (error) {
+    console.error('Error:', error);
+    res.status(500).json({ 
+      error: '生成回复时出现错误',
+      details: error.message 
+    });
+  }
+});
+
 // 启动服务器
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {

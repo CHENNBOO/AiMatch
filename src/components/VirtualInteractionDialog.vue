@@ -78,9 +78,10 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed, nextTick, watch } from 'vue'
+import { ref, computed, nextTick, watch, onMounted } from 'vue'
 import { Promotion, Avatar, UserFilled } from '@element-plus/icons-vue'
 import { ElMessage } from 'element-plus'
+import axios from 'axios'
 
 const props = defineProps<{
   modelValue: boolean
@@ -106,17 +107,21 @@ const inputMessage = ref('')
 const isLoading = ref(false)
 const chatContainer = ref<HTMLElement | null>(null)
 
-// 模拟流式输出
-const streamText = async (text: string, message: Message) => {
-  message.content = ''
-  message.isStreaming = true
+// 获取对方性格描述
+const getPersonalityDescription = () => {
+  const person2Type = localStorage.getItem('person2Type') || ''
+  const person2OtherTypes = JSON.parse(localStorage.getItem('person2OtherTypes') || '[]')
+  const person2CustomType = localStorage.getItem('person2CustomType') || ''
   
-  for (const char of text) {
-    message.content += char
-    await new Promise(resolve => setTimeout(resolve, 1000)) // 每秒显示一个字
+  let personality = `MBTI类型：${person2Type}`
+  if (person2OtherTypes.length > 0) {
+    personality += `\n其他特征：${person2OtherTypes.join('、')}`
+  }
+  if (person2CustomType) {
+    personality += `\n自定义特征：${person2CustomType}`
   }
   
-  message.isStreaming = false
+  return personality
 }
 
 // 发送消息
@@ -129,13 +134,13 @@ const sendMessage = async () => {
   isLoading.value = true
 
   try {
-    // TODO: 调用后端API获取AI回复
-    // const response = await axios.post('/api/chat', { message: userMessage })
-    // messages.value.push({ type: 'ai', content: response.data.reply })
+    const personality = getPersonalityDescription()
+    const response = await axios.post('http://localhost:3000/api/virtual-interaction', {
+      message: userMessage,
+      personality: personality
+    })
     
-    // 模拟AI回复
-    await new Promise(resolve => setTimeout(resolve, 1000))
-    messages.value.push({ type: 'ai', content: '我收到了你的消息：' + userMessage })
+    messages.value.push({ type: 'ai', content: response.data.reply })
   } catch (error) {
     console.error('发送消息失败:', error)
     ElMessage.error('发送消息失败，请稍后重试')
@@ -143,6 +148,22 @@ const sendMessage = async () => {
     isLoading.value = false
   }
 }
+
+// 组件挂载时初始化AI欢迎语
+onMounted(async () => {
+  try {
+    const personality = getPersonalityDescription()
+    const response = await axios.post('http://localhost:3000/api/virtual-interaction', {
+      message: '你好，请介绍一下你自己',
+      personality: personality
+    })
+    
+    messages.value[0].content = response.data.reply
+  } catch (error) {
+    console.error('初始化AI欢迎语失败:', error)
+    ElMessage.error('初始化失败，请刷新页面重试')
+  }
+})
 
 // 监听消息变化，自动滚动到底部
 watch(messages, async () => {
