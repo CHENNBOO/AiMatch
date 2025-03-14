@@ -22,7 +22,7 @@
             :class="['flex items-start gap-4', message.type === 'user' ? 'flex-row-reverse' : 'flex-row']">
             <!-- AI头像 -->
             <div v-if="message.type === 'ai'" class="flex-shrink-0 w-10 h-10 rounded-full bg-gradient-to-br from-blue-500 to-purple-500 flex items-center justify-center">
-              <el-icon class="text-white text-xl"><Avatar /></el-icon>
+              <span class="text-white text-sm font-bold">{{ getAIPersonalityShort() }}</span>
             </div>
             <!-- 用户头像 -->
             <div v-else class="flex-shrink-0 w-10 h-10 rounded-full bg-gradient-to-br from-pink-500 to-orange-500 flex items-center justify-center">
@@ -38,7 +38,11 @@
             ]">
               <div class="flex items-center gap-2 mb-1">
                 <span class="text-sm opacity-70">
-                  {{ message.type === 'user' ? '你' : 'AI助手' }}
+                  {{ message.type === 'user' ? '你' : getAIPersonalityName() }}
+                </span>
+               
+                <span v-if="message.type === 'ai'" class="text-xs opacity-50">
+                 {{ getAIPersonalityDescription() }}
                 </span>
               </div>
               <div class="text-base leading-relaxed">
@@ -102,13 +106,39 @@ interface Message {
 }
 
 const messages = ref<Message[]>([
-  { type: 'ai', content: '你好！我是你的AI伙伴，很高兴和你聊天。', isStreaming: true }
+  { type: 'ai', content: '你好！我将以你选择的性格特征与你互动。', isStreaming: true }
 ])
 const inputMessage = ref('')
 const isLoading = ref(false)
 const chatContainer = ref<HTMLElement | null>(null)
 
-// 获取对方性格描述
+// 获取AI性格简称（用于头像）
+const getAIPersonalityShort = () => {
+  const person2Type = localStorage.getItem('person2Type') || ''
+  return person2Type.substring(0, 2) || 'AI'
+}
+
+// 获取AI性格名称
+const getAIPersonalityName = () => {
+  const person2Type = localStorage.getItem('person2Type') || ''
+  const person2CustomType = localStorage.getItem('person2CustomType') || ''
+  return person2CustomType || `${person2Type}型助手` || 'AI助手'
+}
+
+// 获取AI性格描述（用于消息头部）
+const getAIPersonalityDescription = () => {
+  const person2Type = localStorage.getItem('person2Type') || ''
+  const person2OtherTypes = JSON.parse(localStorage.getItem('person2OtherTypes') || '[]')
+  
+  let description = person2Type
+  if (person2OtherTypes.length > 0) {
+    description += ` | ${person2OtherTypes.join('、')}`
+  }
+  
+  return description
+}
+
+// 获取完整性格描述（用于API请求）
 const getPersonalityDescription = () => {
   const person2Type = localStorage.getItem('person2Type') || ''
   const person2OtherTypes = JSON.parse(localStorage.getItem('person2OtherTypes') || '[]')
