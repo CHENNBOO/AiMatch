@@ -63,15 +63,7 @@ app.post('/api/personality-match', async (req, res) => {
 
     // 解析 AI 返回的结果
     let result=response.data.choices[0].message.content;
-    // try {
-    //   result = JSON.parse(response.data.choices[0].message.content);
-    // } catch (error) {
-    //   // 如果解析失败，返回原始响应
-    // //   return res.json({
-    // //     matchPercentage: 70, // 默认匹配度
-    // //     analysis: response.data.choices[0].message.content
-    // //   });
-    // }
+  
 
     res.json(result);
   } catch (error) {
@@ -95,20 +87,18 @@ app.post('/api/virtual-interaction', async (req, res) => {
     // 构建提示词
     const prompt = `你是一个具有以下性格特征的AI数字人：
 ${personality}
-
 请以这个性格特征来回复用户的消息。保持性格特征的一致性，并给出符合该性格的回应。
-
+注意：你的回复必须严格控制在50字以内。
 用户消息：${message}
-
 请给出回应：`;
-console.log('虚拟互动接口，提示词',prompt);
+console.log('虚拟互动接口=>提示词:',prompt);
     // 调用 Deepseek API
     const response = await axios.post(DEEPSEEK_API_URL, {
       model: 'deepseek-chat',
       messages: [
         {
           role: 'system',
-          content: `你是一个具有特定性格特征的AI数字人。请始终保持这个性格特征来回复用户。`
+          content: `你是一个具有特定性格特征的AI数字人。请始终保持这个性格特征来回复用户。你的回复必须严格控制在50字以内。`
         },
         {
           role: 'user',
@@ -123,9 +113,16 @@ console.log('虚拟互动接口，提示词',prompt);
         'Content-Type': 'application/json'
       }
     });
-    console.log('虚拟互动接口，返回结果',response.data.choices[0].message.content);
+    console.log('虚拟互动接口=>返回结果:',response.data.choices[0].message.content);
+    
+    // 限制返回结果长度为50字
+    let reply = response.data.choices[0].message.content;
+    if (reply.length > 50) {
+      reply = reply.substring(0, 50) + '...';
+    }
+    
     res.json({
-      reply: response.data.choices[0].message.content
+      reply: reply
     });
   } catch (error) {
     console.error('Error:', error);
