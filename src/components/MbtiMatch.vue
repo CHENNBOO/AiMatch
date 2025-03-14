@@ -18,104 +18,364 @@
 
       <!-- 标题区 -->
       <div class="text-center mb-12">
-        <h1 class="text-4xl font-bold text-black dark:text-white mb-4">MBTI 性格匹配分析</h1>
+        <h1 class="text-4xl font-bold text-black dark:text-white mb-4">性格匹配</h1>
         <p class="text-black/70 dark:text-white/70 text-lg">探索不同性格类型之间的互动与和谐</p>
       </div>
 
       <!-- 步骤指示器 -->
-      <div class="max-w-4xl mx-auto mb-8">
-        <el-steps :active="currentStep" finish-status="success" process-status="process" align-center>
-          <el-step title="选择第一个人" description="设置第一个人的MBTI类型" />
-          <el-step title="选择第二个人" description="设置第二个人的MBTI类型" />
-          <el-step title="查看匹配结果" description="分析两种性格类型的匹配度" />
-        </el-steps>
-      </div>
+      <!-- 移除步骤指示器部分 -->
 
       <!-- 选择区域 -->
       <div class="grid grid-cols-1 md:grid-cols-2 gap-8 mb-12">
         <!-- 左侧选择区 -->
         <div class="bg-white/80 dark:bg-gray-800/80 backdrop-blur-xl rounded-2xl p-8 shadow-lg hover:shadow-xl transition-all duration-300"
-             :class="{'ring-2 ring-blue-500 ring-offset-4 ring-offset-gray-50 dark:ring-offset-gray-800': currentStep === 1}">
+             :class="{'ring-2 ring-blue-500 ring-offset-4 ring-offset-gray-50 dark:ring-offset-gray-800': activeArea === 'left'}"
+             @mouseenter="activeArea = 'left'"
+             @mouseleave="activeArea = null">
           <div class="flex items-center justify-between mb-6">
-            <h2 class="text-2xl font-semibold text-black dark:text-white">第一个人的性格类型</h2>
+            <h2 class="text-2xl font-semibold text-black dark:text-white">您的性格类型</h2>
             <el-tag v-if="isFirstPersonComplete" type="success" effect="light" class="ml-2">已完成</el-tag>
           </div>
-          <div class="space-y-6">
-            <div v-for="(dimension, key) in dimensions" :key="key" class="space-y-3">
-              <label class="block text-sm font-medium text-black/70 dark:text-white/70">{{ dimension.label }}</label>
-              <div class="grid grid-cols-2 gap-4">
-                <button
-                  v-for="option in dimension.options"
-                  :key="option.value"
-                  @click="selectPersonality(1, key, option.value)"
+          <div class="mb-4">
+            <h3 class="text-lg font-medium text-black/70 dark:text-white/70 mb-4">MBTI</h3>
+            <div class="grid grid-cols-4 gap-4">
+              <!-- E/I 维度 -->
+              <div class="space-y-2">
+                <button 
+                  @click="selectMBTI(1, 'EI', 'E')"
                   :class="[
-                    'px-6 py-3 rounded-xl text-sm font-medium transition-all duration-200',
-                    person1[key] === option.value
+                    'w-full p-2 rounded-lg transition-all duration-200',
+                    person1.EI === 'E' 
                       ? 'bg-blue-500 text-white shadow-lg shadow-blue-500/30'
-                      : 'bg-gray-100 dark:bg-gray-700 text-black/70 dark:text-white/70 hover:bg-gray-200 dark:hover:bg-gray-600'
+                      : 'bg-gray-100 dark:bg-gray-700 hover:bg-blue-500 hover:text-white'
                   ]"
                 >
-                  {{ option.label }}
+                  <div class="text-sm font-medium">外向</div>
+                  <div class="text-xs opacity-70">Extraversion</div>
+                </button>
+                <button 
+                  @click="selectMBTI(1, 'EI', 'I')"
+                  :class="[
+                    'w-full p-2 rounded-lg transition-all duration-200',
+                    person1.EI === 'I' 
+                      ? 'bg-blue-500 text-white shadow-lg shadow-blue-500/30'
+                      : 'bg-gray-100 dark:bg-gray-700 hover:bg-blue-500 hover:text-white'
+                  ]"
+                >
+                  <div class="text-sm font-medium">内向</div>
+                  <div class="text-xs opacity-70">Introversion</div>
+                </button>
+              </div>
+
+              <!-- S/N 维度 -->
+              <div class="space-y-2">
+                <button 
+                  @click="selectMBTI(1, 'SN', 'S')"
+                  :class="[
+                    'w-full p-2 rounded-lg transition-all duration-200',
+                    person1.SN === 'S' 
+                      ? 'bg-blue-500 text-white shadow-lg shadow-blue-500/30'
+                      : 'bg-gray-100 dark:bg-gray-700 hover:bg-blue-500 hover:text-white'
+                  ]"
+                >
+                  <div class="text-sm font-medium">感觉</div>
+                  <div class="text-xs opacity-70">Sensing</div>
+                </button>
+                <button 
+                  @click="selectMBTI(1, 'SN', 'N')"
+                  :class="[
+                    'w-full p-2 rounded-lg transition-all duration-200',
+                    person1.SN === 'N' 
+                      ? 'bg-blue-500 text-white shadow-lg shadow-blue-500/30'
+                      : 'bg-gray-100 dark:bg-gray-700 hover:bg-blue-500 hover:text-white'
+                  ]"
+                >
+                  <div class="text-sm font-medium">直觉</div>
+                  <div class="text-xs opacity-70">Intuition</div>
+                </button>
+              </div>
+
+              <!-- T/F 维度 -->
+              <div class="space-y-2">
+                <button 
+                  @click="selectMBTI(1, 'TF', 'T')"
+                  :class="[
+                    'w-full p-2 rounded-lg transition-all duration-200',
+                    person1.TF === 'T' 
+                      ? 'bg-blue-500 text-white shadow-lg shadow-blue-500/30'
+                      : 'bg-gray-100 dark:bg-gray-700 hover:bg-blue-500 hover:text-white'
+                  ]"
+                >
+                  <div class="text-sm font-medium">思维</div>
+                  <div class="text-xs opacity-70">Thinking</div>
+                </button>
+                <button 
+                  @click="selectMBTI(1, 'TF', 'F')"
+                  :class="[
+                    'w-full p-2 rounded-lg transition-all duration-200',
+                    person1.TF === 'F' 
+                      ? 'bg-blue-500 text-white shadow-lg shadow-blue-500/30'
+                      : 'bg-gray-100 dark:bg-gray-700 hover:bg-blue-500 hover:text-white'
+                  ]"
+                >
+                  <div class="text-sm font-medium">情感</div>
+                  <div class="text-xs opacity-70">Feeling</div>
+                </button>
+              </div>
+
+              <!-- J/P 维度 -->
+              <div class="space-y-2">
+                <button 
+                  @click="selectMBTI(1, 'JP', 'J')"
+                  :class="[
+                    'w-full p-2 rounded-lg transition-all duration-200',
+                    person1.JP === 'J' 
+                      ? 'bg-blue-500 text-white shadow-lg shadow-blue-500/30'
+                      : 'bg-gray-100 dark:bg-gray-700 hover:bg-blue-500 hover:text-white'
+                  ]"
+                >
+                  <div class="text-sm font-medium">判断</div>
+                  <div class="text-xs opacity-70">Judging</div>
+                </button>
+                <button 
+                  @click="selectMBTI(1, 'JP', 'P')"
+                  :class="[
+                    'w-full p-2 rounded-lg transition-all duration-200',
+                    person1.JP === 'P' 
+                      ? 'bg-blue-500 text-white shadow-lg shadow-blue-500/30'
+                      : 'bg-gray-100 dark:bg-gray-700 hover:bg-blue-500 hover:text-white'
+                  ]"
+                >
+                  <div class="text-sm font-medium">知觉</div>
+                  <div class="text-xs opacity-70">Perceiving</div>
                 </button>
               </div>
             </div>
           </div>
-          <div class="mt-6 flex justify-end" v-if="isFirstPersonComplete">
-            <el-button type="primary" @click="nextStep">下一步</el-button>
+          <div class="mb-4">
+            <h3 class="text-lg font-medium text-black/70 dark:text-white/70 mb-4">其他类型</h3>
+            <div class="grid grid-cols-4 gap-4">
+              <button 
+                v-for="type in otherTypes" 
+                :key="type.id"
+                @click="toggleOtherType(1, type.id)"
+                :class="[
+                  'p-2 rounded-lg transition-all duration-200',
+                  person1.otherTypes.includes(type.id)
+                    ? 'bg-blue-500 text-white shadow-lg shadow-blue-500/30'
+                    : 'bg-gray-100 dark:bg-gray-700 hover:bg-blue-500 hover:text-white'
+                ]"
+              >
+                <div class="text-sm font-medium">{{ type.name }}</div>
+              </button>
+            </div>
+          </div>
+          <div class="mb-4">
+            <h3 class="text-lg font-medium text-black/70 dark:text-white/70 mb-4">
+              DIY类型
+              <span v-if="person1.customType" class="ml-2 text-blue-500">
+                {{ person1.customType }}
+                <el-icon class="ml-1 cursor-pointer hover:text-red-500" @click="clearCustomType(1)"><Delete /></el-icon>
+              </span>
+            </h3>
+            <div class="flex space-x-3">
+              <el-input
+                v-model="customType1"
+                placeholder="输入自定义类型..."
+                class="!bg-white/60 dark:!bg-gray-700/60 !rounded-xl"
+                @keyup.enter="applyCustomType(1)"
+              >
+                <template #append>
+                  <el-button @click="applyCustomType(1)">确定</el-button>
+                </template>
+              </el-input>
+            </div>
+          </div>
+          <div class="mt-6 flex justify-end space-x-4" v-if="isFirstPersonComplete">
+            <el-button @click="clearPerson(1)" class="!text-gray-500 hover:!text-white">清空选择</el-button>
           </div>
         </div>
 
         <!-- 右侧选择区 -->
         <div class="bg-white/80 dark:bg-gray-800/80 backdrop-blur-xl rounded-2xl p-8 shadow-lg hover:shadow-xl transition-all duration-300"
-             :class="{'ring-2 ring-blue-500 ring-offset-4 ring-offset-gray-50 dark:ring-offset-gray-800': currentStep === 2}">
+             :class="{'ring-2 ring-blue-500 ring-offset-4 ring-offset-gray-50 dark:ring-offset-gray-800': activeArea === 'right'}"
+             @mouseenter="activeArea = 'right'"
+             @mouseleave="activeArea = null">
           <div class="flex items-center justify-between mb-6">
-            <h2 class="text-2xl font-semibold text-black dark:text-white">第二个人的性格类型</h2>
+            <h2 class="text-2xl font-semibold text-black dark:text-white">对方的性格类型</h2>
             <el-tag v-if="isSecondPersonComplete" type="success" effect="light" class="ml-2">已完成</el-tag>
           </div>
-          <div class="space-y-6">
-            <div v-for="(dimension, key) in dimensions" :key="key" class="space-y-3">
-              <label class="block text-sm font-medium text-black/70 dark:text-white/70">{{ dimension.label }}</label>
-              <div class="grid grid-cols-2 gap-4">
-                <button
-                  v-for="option in dimension.options"
-                  :key="option.value"
-                  @click="selectPersonality(2, key, option.value)"
+          <div class="mb-4">
+            <h3 class="text-lg font-medium text-black/70 dark:text-white/70 mb-4">MBTI</h3>
+            <div class="grid grid-cols-4 gap-4">
+              <!-- E/I 维度 -->
+              <div class="space-y-2">
+                <button 
+                  @click="selectMBTI(2, 'EI', 'E')"
                   :class="[
-                    'px-6 py-3 rounded-xl text-sm font-medium transition-all duration-200',
-                    person2[key] === option.value
+                    'w-full p-2 rounded-lg transition-all duration-200',
+                    person2.EI === 'E' 
                       ? 'bg-blue-500 text-white shadow-lg shadow-blue-500/30'
-                      : 'bg-gray-100 dark:bg-gray-700 text-black/70 dark:text-white/70 hover:bg-gray-200 dark:hover:bg-gray-600'
+                      : 'bg-gray-100 dark:bg-gray-700 hover:bg-blue-500 hover:text-white'
                   ]"
                 >
-                  {{ option.label }}
+                  <div class="text-sm font-medium">外向</div>
+                  <div class="text-xs opacity-70">Extraversion</div>
+                </button>
+                <button 
+                  @click="selectMBTI(2, 'EI', 'I')"
+                  :class="[
+                    'w-full p-2 rounded-lg transition-all duration-200',
+                    person2.EI === 'I' 
+                      ? 'bg-blue-500 text-white shadow-lg shadow-blue-500/30'
+                      : 'bg-gray-100 dark:bg-gray-700 hover:bg-blue-500 hover:text-white'
+                  ]"
+                >
+                  <div class="text-sm font-medium">内向</div>
+                  <div class="text-xs opacity-70">Introversion</div>
+                </button>
+              </div>
+
+              <!-- S/N 维度 -->
+              <div class="space-y-2">
+                <button 
+                  @click="selectMBTI(2, 'SN', 'S')"
+                  :class="[
+                    'w-full p-2 rounded-lg transition-all duration-200',
+                    person2.SN === 'S' 
+                      ? 'bg-blue-500 text-white shadow-lg shadow-blue-500/30'
+                      : 'bg-gray-100 dark:bg-gray-700 hover:bg-blue-500 hover:text-white'
+                  ]"
+                >
+                  <div class="text-sm font-medium">感觉</div>
+                  <div class="text-xs opacity-70">Sensing</div>
+                </button>
+                <button 
+                  @click="selectMBTI(2, 'SN', 'N')"
+                  :class="[
+                    'w-full p-2 rounded-lg transition-all duration-200',
+                    person2.SN === 'N' 
+                      ? 'bg-blue-500 text-white shadow-lg shadow-blue-500/30'
+                      : 'bg-gray-100 dark:bg-gray-700 hover:bg-blue-500 hover:text-white'
+                  ]"
+                >
+                  <div class="text-sm font-medium">直觉</div>
+                  <div class="text-xs opacity-70">Intuition</div>
+                </button>
+              </div>
+
+              <!-- T/F 维度 -->
+              <div class="space-y-2">
+                <button 
+                  @click="selectMBTI(2, 'TF', 'T')"
+                  :class="[
+                    'w-full p-2 rounded-lg transition-all duration-200',
+                    person2.TF === 'T' 
+                      ? 'bg-blue-500 text-white shadow-lg shadow-blue-500/30'
+                      : 'bg-gray-100 dark:bg-gray-700 hover:bg-blue-500 hover:text-white'
+                  ]"
+                >
+                  <div class="text-sm font-medium">思维</div>
+                  <div class="text-xs opacity-70">Thinking</div>
+                </button>
+                <button 
+                  @click="selectMBTI(2, 'TF', 'F')"
+                  :class="[
+                    'w-full p-2 rounded-lg transition-all duration-200',
+                    person2.TF === 'F' 
+                      ? 'bg-blue-500 text-white shadow-lg shadow-blue-500/30'
+                      : 'bg-gray-100 dark:bg-gray-700 hover:bg-blue-500 hover:text-white'
+                  ]"
+                >
+                  <div class="text-sm font-medium">情感</div>
+                  <div class="text-xs opacity-70">Feeling</div>
+                </button>
+              </div>
+
+              <!-- J/P 维度 -->
+              <div class="space-y-2">
+                <button 
+                  @click="selectMBTI(2, 'JP', 'J')"
+                  :class="[
+                    'w-full p-2 rounded-lg transition-all duration-200',
+                    person2.JP === 'J' 
+                      ? 'bg-blue-500 text-white shadow-lg shadow-blue-500/30'
+                      : 'bg-gray-100 dark:bg-gray-700 hover:bg-blue-500 hover:text-white'
+                  ]"
+                >
+                  <div class="text-sm font-medium">判断</div>
+                  <div class="text-xs opacity-70">Judging</div>
+                </button>
+                <button 
+                  @click="selectMBTI(2, 'JP', 'P')"
+                  :class="[
+                    'w-full p-2 rounded-lg transition-all duration-200',
+                    person2.JP === 'P' 
+                      ? 'bg-blue-500 text-white shadow-lg shadow-blue-500/30'
+                      : 'bg-gray-100 dark:bg-gray-700 hover:bg-blue-500 hover:text-white'
+                  ]"
+                >
+                  <div class="text-sm font-medium">知觉</div>
+                  <div class="text-xs opacity-70">Perceiving</div>
                 </button>
               </div>
             </div>
           </div>
-          <div class="mt-6 flex justify-between" v-if="currentStep === 2">
-            <el-button @click="previousStep">上一步</el-button>
-            <el-button type="primary" @click="calculateMatch" :disabled="!isSecondPersonComplete">
-              开始分析
-            </el-button>
+          <div class="mb-4">
+            <h3 class="text-lg font-medium text-black/70 dark:text-white/70 mb-4">其他类型</h3>
+            <div class="grid grid-cols-4 gap-4">
+              <button 
+                v-for="type in otherTypes" 
+                :key="type.id"
+                @click="toggleOtherType(2, type.id)"
+                :class="[
+                  'p-2 rounded-lg transition-all duration-200',
+                  person2.otherTypes.includes(type.id)
+                    ? 'bg-blue-500 text-white shadow-lg shadow-blue-500/30'
+                    : 'bg-gray-100 dark:bg-gray-700 hover:bg-blue-500 hover:text-white'
+                ]"
+              >
+                <div class="text-sm font-medium">{{ type.name }}</div>
+              </button>
+            </div>
+          </div>
+          <div class="mb-4">
+            <h3 class="text-lg font-medium text-black/70 dark:text-white/70 mb-4">
+              DIY类型
+              <span v-if="person2.customType" class="ml-2 text-blue-500">
+                {{ person2.customType }}
+                <el-icon class="ml-1 cursor-pointer hover:text-red-500" @click="clearCustomType(2)"><Delete /></el-icon>
+              </span>
+            </h3>
+            <div class="flex space-x-3">
+              <el-input
+                v-model="customType2"
+                placeholder="输入自定义类型..."
+                class="!bg-white/60 dark:!bg-gray-700/60 !rounded-xl"
+                @keyup.enter="applyCustomType(2)"
+              >
+                <template #append>
+                  <el-button @click="applyCustomType(2)">确定</el-button>
+                </template>
+              </el-input>
+            </div>
+          </div>
+          <div class="mt-6 flex justify-end space-x-4" v-if="isSecondPersonComplete">
+            <el-button @click="clearPerson(2)" class="!text-gray-500 hover:!text-white">清空选择</el-button>
           </div>
         </div>
       </div>
 
-      <!-- 快速选择区 -->
-      <div class="max-w-4xl mx-auto mb-8">
-        <div class="bg-white/80 dark:bg-gray-800/80 backdrop-blur-xl rounded-2xl p-6 shadow-lg">
-          <h3 class="text-lg font-semibold text-black dark:text-white mb-4">快速选择常见类型</h3>
-          <div class="grid grid-cols-4 md:grid-cols-8 gap-2">
-            <button
-              v-for="type in commonTypes"
-              :key="type"
-              @click="quickSelect(type)"
-              class="px-3 py-2 rounded-lg text-sm font-medium bg-gray-100 dark:bg-gray-700 text-black/70 dark:text-white/70 hover:bg-blue-500 hover:text-white transition-all duration-200"
-            >
-              {{ type }}
-            </button>
-          </div>
-        </div>
+      <!-- 设置完成按钮 -->
+      <div class="flex justify-center mt-8" v-if="isFirstPersonComplete && isSecondPersonComplete">
+        <el-button 
+          type="primary" 
+          @click="calculateMatch" 
+          class="!text-blue-500 hover:!text-white px-8 text-lg"
+          size="large"
+        >
+          设置完成
+        </el-button>
       </div>
 
       <!-- 结果展示区 -->
@@ -133,7 +393,7 @@
             <div class="text-center mb-8">
               <div class="flex items-center justify-center space-x-8">
                 <div class="text-center">
-                  <div class="text-sm text-black/70 dark:text-white/70 mb-2">性格类型一</div>
+                  <div class="text-sm text-black/70 dark:text-white/70 mb-2">您的类型</div>
                   <div class="text-2xl font-bold text-blue-500">{{ getFullType(person1) }}</div>
                   <div class="mt-2 text-sm text-black/50 dark:text-white/50">{{ getTypeDescription(person1) }}</div>
                 </div>
@@ -149,7 +409,7 @@
                   <div class="mt-2 text-sm text-black/70 dark:text-white/70">匹配度</div>
                 </div>
                 <div class="text-center">
-                  <div class="text-sm text-black/70 dark:text-white/70 mb-2">性格类型二</div>
+                  <div class="text-sm text-black/70 dark:text-white/70 mb-2">对方类型</div>
                   <div class="text-2xl font-bold text-blue-500">{{ getFullType(person2) }}</div>
                   <div class="mt-2 text-sm text-black/50 dark:text-white/50">{{ getTypeDescription(person2) }}</div>
                 </div>
@@ -226,6 +486,77 @@
           </div>
         </div>
       </div>
+
+      <!-- 功能选择弹框 -->
+      <div v-if="showFunctionDialog" class="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center p-4 animate__animated animate__fadeIn">
+        <div class="bg-white dark:bg-gray-800 rounded-3xl shadow-2xl max-w-4xl w-full max-h-[90vh] overflow-y-auto animate__animated animate__zoomIn">
+          <div class="sticky top-0 bg-white dark:bg-gray-800 p-6 border-b border-gray-200 dark:border-gray-700 flex justify-between items-center">
+            <h2 class="text-2xl font-bold bg-gradient-to-r from-blue-500 to-purple-500 bg-clip-text text-transparent">选择功能</h2>
+            <el-button circle @click="closeFunctionDialog" class="hover:bg-gray-100 dark:hover:bg-gray-700">
+              <el-icon><Close /></el-icon>
+            </el-button>
+          </div>
+          
+          <div class="p-8">
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 animate__animated animate__fadeInUp">
+              <!-- MBTI匹配 -->
+              <router-link to="/mbti" 
+                class="group relative bg-white/80 dark:bg-gray-800/80 backdrop-blur-xl rounded-2xl p-8 shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1">
+                <div class="absolute inset-0 bg-gradient-to-br from-blue-500/0 to-blue-500/0 group-hover:from-blue-500/5 group-hover:to-blue-500/10 rounded-2xl transition-all duration-300"></div>
+                <div class="relative">
+                  <el-icon class="text-4xl mb-4 text-black dark:text-white"><UserFilled /></el-icon>
+                  <h3 class="text-2xl font-semibold text-black dark:text-white mb-3">MBTI匹配</h3>
+                  <p class="text-black/70 dark:text-white/70">探索性格类型的完美匹配</p>
+                </div>
+              </router-link>
+
+              <!-- 虚拟互动 -->
+              <router-link to="/virtual-interaction"
+                class="group relative bg-white/80 dark:bg-gray-800/80 backdrop-blur-xl rounded-2xl p-8 shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1">
+                <div class="absolute inset-0 bg-gradient-to-br from-pink-500/0 to-pink-500/0 group-hover:from-pink-500/5 group-hover:to-pink-500/10 rounded-2xl transition-all duration-300"></div>
+                <div class="relative">
+                  <el-icon class="text-4xl mb-4 text-black dark:text-white"><Avatar /></el-icon>
+                  <h3 class="text-2xl font-semibold text-black dark:text-white mb-3">虚拟互动</h3>
+                  <p class="text-black/70 dark:text-white/70">智能虚拟伙伴陪伴交流</p>
+                </div>
+              </router-link>
+
+              <!-- 活动策划 -->
+              <router-link to="/event-planner"
+                class="group relative bg-white/80 dark:bg-gray-800/80 backdrop-blur-xl rounded-2xl p-8 shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1">
+                <div class="absolute inset-0 bg-gradient-to-br from-green-500/0 to-green-500/0 group-hover:from-green-500/5 group-hover:to-green-500/10 rounded-2xl transition-all duration-300"></div>
+                <div class="relative">
+                  <el-icon class="text-4xl mb-4 text-black dark:text-white"><Calendar /></el-icon>
+                  <h3 class="text-2xl font-semibold text-black dark:text-white mb-3">活动策划</h3>
+                  <p class="text-black/70 dark:text-white/70">基于性格特征的个性化活动方案</p>
+                </div>
+              </router-link>
+
+              <!-- 心理健康 -->
+              <router-link to="/mental-health"
+                class="group relative bg-white/80 dark:bg-gray-800/80 backdrop-blur-xl rounded-2xl p-8 shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1">
+                <div class="absolute inset-0 bg-gradient-to-br from-purple-500/0 to-purple-500/0 group-hover:from-purple-500/5 group-hover:to-purple-500/10 rounded-2xl transition-all duration-300"></div>
+                <div class="relative">
+                  <el-icon class="text-4xl mb-4 text-black dark:text-white"><Sunny /></el-icon>
+                  <h3 class="text-2xl font-semibold text-black dark:text-white mb-3">心理健康</h3>
+                  <p class="text-black/70 dark:text-white/70">专业的心理健康评估与建议</p>
+                </div>
+              </router-link>
+
+              <!-- 沟通指导 -->
+              <router-link to="/communication-guide"
+                class="group relative bg-white/80 dark:bg-gray-800/80 backdrop-blur-xl rounded-2xl p-8 shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1">
+                <div class="absolute inset-0 bg-gradient-to-br from-orange-500/0 to-orange-500/0 group-hover:from-orange-500/5 group-hover:to-orange-500/10 rounded-2xl transition-all duration-300"></div>
+                <div class="relative">
+                  <el-icon class="text-4xl mb-4 text-black dark:text-white"><ChatDotRound /></el-icon>
+                  <h3 class="text-2xl font-semibold text-black dark:text-white mb-3">沟通指导</h3>
+                  <p class="text-black/70 dark:text-white/70">提升沟通技巧的智能助手</p>
+                </div>
+              </router-link>
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
   </div>
 </template>
@@ -241,7 +572,12 @@ import {
   Warning, 
   Sunny, 
   Back,
-  Close
+  Close,
+  Plus,
+  Delete,
+  UserFilled,
+  Avatar,
+  Calendar
 } from '@element-plus/icons-vue'
 import 'animate.css'
 
@@ -251,6 +587,8 @@ interface PersonType {
   SN: string
   TF: string
   JP: string
+  otherTypes: string[]
+  customType?: string
 }
 
 interface DimensionOption {
@@ -309,19 +647,35 @@ const commonTypes = [
   'ISTP', 'ISFP', 'ESTP', 'ESFP'
 ]
 
+// 其他类型定义
+const otherTypes = ref([
+  { id: 'HSP', name: '高敏感人群 (HSP)' },
+  { id: 'GIFTED', name: '天赋异禀者' },
+  { id: 'ADHD', name: '注意力缺陷' },
+  { id: 'AUTISM', name: '自闭症谱系' },
+  { id: 'ANXIOUS', name: '焦虑倾向' },
+  { id: 'CREATIVE', name: '创意型人格' },
+  { id: 'EMPATH', name: '共情能力者' },
+  { id: 'LOGICAL', name: '逻辑思维者' }
+])
+
 // 状态管理
-const currentStep = ref(1)
+// const currentStep = ref(1) // 移除步骤变量
 const person1 = ref<PersonType>({
   EI: '',
   SN: '',
   TF: '',
-  JP: ''
+  JP: '',
+  otherTypes: [],
+  customType: ''
 })
 const person2 = ref<PersonType>({
   EI: '',
   SN: '',
   TF: '',
-  JP: ''
+  JP: '',
+  otherTypes: [],
+  customType: ''
 })
 const showResult = ref(false)
 const matchPercentage = ref(0)
@@ -332,14 +686,22 @@ const parsedDescription = ref({
   challenges: [] as string[],
   suggestions: [] as string[]
 })
+const customType1 = ref('')
+const customType2 = ref('')
+const showFunctionDialog = ref(false)
+const activeArea = ref<'left' | 'right' | null>(null)
 
 // 计算属性
 const isFirstPersonComplete = computed(() => {
-  return Object.values(person1.value).every(v => v !== '')
+  return (person1.value.EI && person1.value.SN && person1.value.TF && person1.value.JP) || 
+         person1.value.customType || 
+         person1.value.otherTypes.length > 0
 })
 
 const isSecondPersonComplete = computed(() => {
-  return Object.values(person2.value).every(v => v !== '')
+  return (person2.value.EI && person2.value.SN && person2.value.TF && person2.value.JP) || 
+         person2.value.customType || 
+         person2.value.otherTypes.length > 0
 })
 
 const isSelectionComplete = computed(() => {
@@ -347,7 +709,7 @@ const isSelectionComplete = computed(() => {
 })
 
 // 方法定义
-const selectPersonality = (person: number, key: keyof PersonType, value: string) => {
+const selectMBTI = (person: number, key: keyof Omit<PersonType, 'otherTypes'>, value: string) => {
   if (person === 1) {
     person1.value[key] = value
   } else {
@@ -355,36 +717,32 @@ const selectPersonality = (person: number, key: keyof PersonType, value: string)
   }
 }
 
-const nextStep = () => {
-  if (currentStep.value < 3) {
-    currentStep.value++
-  }
-}
-
-const previousStep = () => {
-  if (currentStep.value > 1) {
-    currentStep.value--
+const toggleOtherType = (person: number, type: string) => {
+  if (person === 1) {
+    if (person1.value.otherTypes.includes(type)) {
+      person1.value.otherTypes = person1.value.otherTypes.filter(t => t !== type)
+    } else {
+      person1.value.otherTypes.push(type)
+    }
+  } else {
+    if (person2.value.otherTypes.includes(type)) {
+      person2.value.otherTypes = person2.value.otherTypes.filter(t => t !== type)
+    } else {
+      person2.value.otherTypes.push(type)
+    }
   }
 }
 
 const quickSelect = (type: string) => {
-  if (currentStep.value === 1) {
-    person1.value = {
-      EI: type[0],
-      SN: type[1],
-      TF: type[2],
-      JP: type[3]
-    }
-    nextStep()
-  } else if (currentStep.value === 2) {
-    person2.value = {
-      EI: type[0],
-      SN: type[1],
-      TF: type[2],
-      JP: type[3]
-    }
-    calculateMatch()
+  person1.value = {
+    EI: type[0],
+    SN: type[1],
+    TF: type[2],
+    JP: type[3],
+    otherTypes: [],
+    customType: ''
   }
+  calculateMatch()
 }
 
 const getFullType = (person: PersonType) => {
@@ -401,63 +759,7 @@ const calculateMatch = async () => {
     return
   }
 
-  const loading = ElLoading.service({
-    lock: true,
-    text: '正在分析匹配度...',
-    background: 'rgba(0, 0, 0, 0.7)'
-  })
-
-  try {
-    const type1 = getFullType(person1.value)
-    const type2 = getFullType(person2.value)
-    
-    const response = await axios.post('/api/mbti-match', {
-      type1,
-      type2
-    })
-
-    // 解析返回的数据
-    const sections = response.data.description.split('\n\n')
-    const parsedDesc = {
-      overall: '',
-      communication: '',
-      values: '',
-      challenges: [] as string[],
-      suggestions: [] as string[]
-    }
-
-    sections.forEach(section => {
-      if (section.startsWith('总体匹配度')) {
-        parsedDesc.overall = section.replace('总体匹配度\n', '').trim()
-      } else if (section.startsWith('沟通方式')) {
-        parsedDesc.communication = section.replace('沟通方式的兼容性\n', '').trim()
-      } else if (section.startsWith('共同价值观')) {
-        parsedDesc.values = section.replace('共同价值观\n', '').trim()
-      } else if (section.startsWith('可能存在的挑战')) {
-        parsedDesc.challenges = section
-          .replace('可能存在的挑战\n', '')
-          .split('\n')
-          .map(challenge => challenge.replace(/^\d+、/, '').trim())
-          .filter(Boolean)
-      } else if (section.startsWith('改善建议')) {
-        parsedDesc.suggestions = section
-          .replace('改善建议\n', '')
-          .split('\n')
-          .map(suggestion => suggestion.replace(/^\d+、/, '').trim())
-          .filter(Boolean)
-      }
-    })
-
-    matchPercentage.value = response.data.matchPercentageValue
-    parsedDescription.value = parsedDesc
-    currentStep.value = 3
-    showResult.value = true
-  } catch (error) {
-    ElMessage.error('分析过程中出现错误，请重试')
-    console.error('Error:', error)
-  } finally {
-    loading.close()
-  }
+  showFunctionDialog.value = true
 }
 
 const resetSelection = () => {
@@ -465,16 +767,19 @@ const resetSelection = () => {
     EI: '',
     SN: '',
     TF: '',
-    JP: ''
+    JP: '',
+    otherTypes: [],
+    customType: ''
   }
   person2.value = {
     EI: '',
     SN: '',
     TF: '',
-    JP: ''
+    JP: '',
+    otherTypes: [],
+    customType: ''
   }
   showResult.value = false
-  currentStep.value = 1
   matchPercentage.value = 0
   parsedDescription.value = {
     overall: '',
@@ -495,6 +800,69 @@ const exportReport = () => {
 
 const shareResult = () => {
   ElMessage.success('分享链接已复制到剪贴板')
+}
+
+const applyCustomType = (person: number) => {
+  const type = person === 1 ? customType1 : customType2
+  if (type.value.trim()) {
+    if (person === 1) {
+      person1.value = {
+        EI: '',
+        SN: '',
+        TF: '',
+        JP: '',
+        otherTypes: [],
+        customType: type.value.trim()
+      }
+      customType1.value = ''
+    } else {
+      person2.value = {
+        EI: '',
+        SN: '',
+        TF: '',
+        JP: '',
+        otherTypes: [],
+        customType: type.value.trim()
+      }
+      customType2.value = ''
+    }
+  }
+}
+
+const clearCustomType = (person: number) => {
+  if (person === 1) {
+    person1.value.customType = ''
+  } else {
+    person2.value.customType = ''
+  }
+}
+
+const closeFunctionDialog = () => {
+  showFunctionDialog.value = false
+}
+
+const clearPerson = (person: number) => {
+  if (person === 1) {
+    person1.value = {
+      EI: '',
+      SN: '',
+      TF: '',
+      JP: '',
+      otherTypes: [],
+      customType: ''
+    }
+    customType1.value = ''
+  } else {
+    person2.value = {
+      EI: '',
+      SN: '',
+      TF: '',
+      JP: '',
+      otherTypes: [],
+      customType: ''
+    }
+    customType2.value = ''
+  }
 }
 </script>
 
@@ -565,6 +933,23 @@ const shareResult = () => {
 
 :deep(.el-step__head.is-finish) {
   @apply text-green-500 border-green-500;
+}
+
+/* Element Plus 按钮样式覆盖 */
+:deep(.el-button) {
+  @apply !text-blue-500 hover:!text-white;
+}
+
+:deep(.el-button--primary) {
+  @apply !text-blue-500 hover:!text-white;
+}
+
+:deep(.el-button--primary.is-disabled) {
+  @apply !text-gray-400;
+}
+
+:deep(.el-button.is-disabled) {
+  @apply !text-gray-400;
 }
 
 /* 动画过渡 */
