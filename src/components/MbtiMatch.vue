@@ -8,6 +8,14 @@
 
     <!-- 主要内容区 -->
     <div class="container mx-auto px-4 py-8 relative">
+      <!-- 返回按钮 -->
+      <router-link to="/" class="absolute left-4 top-4">
+        <el-button class="flex items-center space-x-2 !bg-white/80 dark:!bg-gray-800/80 backdrop-blur-xl shadow-lg hover:shadow-xl transition-all duration-300">
+          <el-icon><Back /></el-icon>
+          <span>返回首页</span>
+        </el-button>
+      </router-link>
+
       <!-- 标题区 -->
       <div class="text-center mb-12">
         <h1 class="text-4xl font-bold text-gray-900 dark:text-white mb-4">MBTI 性格匹配分析</h1>
@@ -193,7 +201,7 @@
 import { ref, computed } from 'vue'
 import axios from 'axios'
 import { ElLoading, ElMessage } from 'element-plus'
-import { InfoFilled, ChatDotRound, Connection, Warning, Sunny } from '@element-plus/icons-vue'
+import { InfoFilled, ChatDotRound, Connection, Warning, Sunny, Back } from '@element-plus/icons-vue'
 import 'animate.css'
 
 interface PersonType {

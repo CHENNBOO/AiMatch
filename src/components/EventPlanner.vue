@@ -1,7 +1,7 @@
 <template>
   <div class="event-planner-container">
     <div class="planner-header">
-      <h2>事件策划 Agent</h2>
+      <h2>活动策划</h2>
       <p class="subtitle">基于MBTI性格特征为您定制专属活动方案</p>
     </div>
 
