@@ -583,6 +583,7 @@ import 'animate.css'
 import PersonalityIncompleteDialog from './PersonalityIncompleteDialog.vue'
 import { useRouter } from 'vue-router'
 import { typeTranslations } from '../config/personalityTypes'
+import { checkForbiddenWords, getForbiddenWordType } from '../config/forbiddenWords'
 
 // 类型定义
 interface PersonType {
@@ -808,6 +809,13 @@ const shareResult = () => {
 const applyCustomType = (person: number) => {
   const type = person === 1 ? customType1 : customType2
   if (type.value.trim()) {
+    // 检查违禁词
+    if (checkForbiddenWords(type.value.trim())) {
+      const forbiddenTypes = getForbiddenWordType(type.value.trim())
+      ElMessage.error(`输入内容包含违禁词：${forbiddenTypes.join('、')}，请重新输入`)
+      return
+    }
+
     if (person === 1) {
       person1.value = {
         EI: '',
