@@ -8,8 +8,6 @@ export default defineConfig({
     port: 5173,
     proxy: {
       '/api': {
-        // 修改点1: 指向本地后端服务
-        // target: 'http://117.72.43.183:3000', 
         target: 'http://localhost:3000', 
         changeOrigin: true,
         
