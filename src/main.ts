@@ -15,7 +15,7 @@ for (const [key, component] of Object.entries(ElementPlusIconsVue)) {
 }
 
 // 配置axios默认URL
-axios.defaults.baseURL = 'http://117.72.43.183:3000'
+axios.defaults.baseURL = import.meta.env.VITE_SERVER_URL
 
 app.use(ElementPlus)
 app.use(router)
