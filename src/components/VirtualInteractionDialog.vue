@@ -187,7 +187,7 @@ const sendMessage = async () => {
 
   try {
     const personality = getPersonalityDescription()
-    const response = await axios.post('http://localhost:3000/api/virtual-interaction', {
+    const response = await axios.post('/api/virtual-interaction', {
       message: userMessage,
       personality: personality
     })
