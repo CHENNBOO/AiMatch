@@ -131,6 +131,7 @@
 <script setup lang="ts">
 import { ref, onMounted, computed, watch } from 'vue'
 import { Connection } from '@element-plus/icons-vue'
+import { translatePersonalityType } from '../config/personalityTypes'
 import 'animate.css'
 
 const props = defineProps<{
@@ -171,7 +172,7 @@ const initializeData = () => {
   const p1CustomType = localStorage.getItem('person1CustomType')
   
   person1Type.value = p1Type || ''
-  person1OtherTypes.value = p1OtherTypes ? JSON.parse(p1OtherTypes) : []
+  person1OtherTypes.value = p1OtherTypes ? JSON.parse(p1OtherTypes).map(translatePersonalityType) : []
   person1CustomType.value = p1CustomType || ''
 
   // 读取第二个人的数据
@@ -180,7 +181,7 @@ const initializeData = () => {
   const p2CustomType = localStorage.getItem('person2CustomType')
   
   person2Type.value = p2Type || ''
-  person2OtherTypes.value = p2OtherTypes ? JSON.parse(p2OtherTypes) : []
+  person2OtherTypes.value = p2OtherTypes ? JSON.parse(p2OtherTypes).map(translatePersonalityType) : []
   person2CustomType.value = p2CustomType || ''
 
   // 计算匹配度

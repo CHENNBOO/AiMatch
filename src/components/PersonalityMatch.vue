@@ -582,6 +582,7 @@ import {
 import 'animate.css'
 import PersonalityIncompleteDialog from './PersonalityIncompleteDialog.vue'
 import { useRouter } from 'vue-router'
+import { typeTranslations } from '../config/personalityTypes'
 
 // 类型定义
 interface PersonType {
@@ -650,16 +651,12 @@ const commonTypes = [
 ]
 
 // 其他类型定义
-const otherTypes = ref([
-  { id: 'HSP', name: '高敏感人群 (HSP)' },
-  { id: 'GIFTED', name: '天赋异禀者' },
-  { id: 'ADHD', name: '注意力缺陷' },
-  { id: 'AUTISM', name: '自闭症谱系' },
-  { id: 'ANXIOUS', name: '焦虑倾向' },
-  { id: 'CREATIVE', name: '创意型人格' },
-  { id: 'EMPATH', name: '共情能力者' },
-  { id: 'LOGICAL', name: '逻辑思维者' }
-])
+const otherTypes = ref(
+  Object.entries(typeTranslations).map(([id, name]) => ({
+    id,
+    name: `${name} (${id})`
+  }))
+)
 
 // 状态管理
 // const currentStep = ref(1) // 移除步骤变量
