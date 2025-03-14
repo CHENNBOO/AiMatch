@@ -1,7 +1,10 @@
 # AiMatch - MBTI 性格匹配系统
 ![image-20241211153716532](https://gitee.com/CHENNBOO/AiMatch/raw/master/img/1.png)
-![image-20241211153716532](https://gitee.com/CHENNBOO/AiMatch/raw/master/img/2.png)
-![image-20241211153716532](https://gitee.com/CHENNBOO/AiMatch/raw/master/img/3.png)
+
+![image-20241211153716532](https://gitee.com/CHENNBOO/AiMatch/blob/master/img/2.png)
+
+![image-20241211153716532](https://gitee.com/CHENNBOO/AiMatch/blob/master/img/3.png)
+
 一个基于 MBTI 性格类型的匹配分析系统。
 ## 技术栈
 
