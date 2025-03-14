@@ -31,7 +31,7 @@
           <div class="relative">
             <el-icon class="text-4xl mb-4 text-black dark:text-white"><UserFilled /></el-icon>
             <h3 class="text-2xl font-semibold text-black dark:text-white mb-3">性格设置</h3>
-            <p class="text-black/70 dark:text-white/70">设置性格类型，探索性格人群的互动场景</p>
+            <p class="text-black/70 dark:text-white/70">设置性格类型，探索不同性格人群的互动场景</p>
           </div>
         </router-link>
 
