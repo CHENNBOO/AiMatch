@@ -90,7 +90,7 @@
         </div>
 
         <!-- 匹配度展示 -->
-        <div class="text-center mb-12 animate__animated animate__fadeInUp animate__delay-4s">
+        <div class="text-center mb-12 animate__animated animate__fadeInUp animate__delay-2s">
           <div class="inline-block relative">
             <el-progress
               type="dashboard"
@@ -112,11 +112,11 @@
         </div>
 
         <!-- 分析结果 -->
-        <div class="space-y-6 animate__animated animate__fadeInUp animate__delay-5s">
+        <div class="space-y-6 animate__animated animate__fadeInUp animate__delay-3s">
           <div class="bg-white/60 dark:bg-gray-800/60 backdrop-blur-xl rounded-2xl p-6 shadow-lg">
             <h4 class="text-xl font-bold text-black dark:text-white mb-4 flex items-center">
-              <el-icon class="mr-2"><Connection /></el-icon>
-              匹配分析
+              <el-icon :class="{ 'animate-spin': isLoading }" class="mr-2"><Connection /></el-icon>
+              {{ isLoading ? 'AI匹配分析中' : '匹配分析' }}
             </h4>
             <p class="text-black/70 dark:text-white/70 leading-relaxed">
               {{ analysisResult }}
@@ -148,6 +148,8 @@ const dialogVisible = computed({
   set: (value) => emit('update:modelValue', value)
 })
 
+const isLoading = ref(false)
+
 // 从localStorage读取数据
 const person1Type = ref('')
 const person1OtherTypes = ref<string[]>([])
@@ -158,10 +160,9 @@ const person2CustomType = ref('')
 const matchPercentage = ref(0)
 const analysisResult = ref('')
 
-
-
 // 计算匹配度和分析结果
 const calculateMatch = async () => {
+  isLoading.value = true
   try {
     // 构建第一个人的性格描述
     const person1Description = [
@@ -199,6 +200,8 @@ const calculateMatch = async () => {
     // 设置默认值
     matchPercentage.value = 0;
     analysisResult.value = '请求失败，请稍后重试';
+  } finally {
+    isLoading.value = false
   }
 }
 
@@ -276,5 +279,18 @@ watch(() => dialogVisible.value, (newVal) => {
 /* 动画持续时间 */
 .animate__animated {
   --animate-duration: 800ms;
+}
+
+@keyframes spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.animate-spin {
+  animation: spin 1s linear infinite;
 }
 </style> 
