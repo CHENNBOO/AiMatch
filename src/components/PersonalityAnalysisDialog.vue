@@ -135,7 +135,7 @@ import { translatePersonalityType } from '../config/personalityTypes'
 import 'animate.css'
 import axios from 'axios'
 import { ElMessage } from 'element-plus'
-import { removeJsonMarkers } from '../utils/stringUtils'
+import { removeJsonMarkers,removeMarkdown } from '../utils/stringUtils'
 
 const props = defineProps<{
   modelValue: boolean
@@ -186,7 +186,8 @@ const calculateMatch = async () => {
 
     // 处理返回的数据
     const cleanResponse = removeJsonMarkers(response.data);
-    const result = JSON.parse(cleanResponse);
+    const cleanResponse2 = removeMarkdown(cleanResponse);
+    const result = JSON.parse(cleanResponse2);
 
     // 更新匹配度和分析结果
     matchPercentage.value = result.matchPercentage;
