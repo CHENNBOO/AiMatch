@@ -131,7 +131,11 @@
 <script setup lang="ts">
 import { ref, onMounted, computed, watch } from 'vue'
 import { Connection } from '@element-plus/icons-vue'
+import { translatePersonalityType } from '../config/personalityTypes'
 import 'animate.css'
+import axios from 'axios'
+import { ElMessage } from 'element-plus'
+import { removeJsonMarkers } from '../utils/stringUtils'
 
 const props = defineProps<{
   modelValue: boolean
@@ -154,13 +158,47 @@ const person2CustomType = ref('')
 const matchPercentage = ref(0)
 const analysisResult = ref('')
 
+
+
 // 计算匹配度和分析结果
-const calculateMatch = () => {
-  // 这里可以添加更复杂的匹配算法
-  matchPercentage.value = Math.floor(Math.random() * 40) + 60 // 60-100之间的随机数
-  
-  // 生成分析结果
-  analysisResult.value = '基于双方的性格类型分析，你们具有很强的互补性。在沟通方式上可能存在一些差异，但这些差异恰恰能够促进双方的成长和理解。建议在日常互动中多关注对方的需求，适当调整自己的表达方式，这样能够建立更加和谐的关系。'
+const calculateMatch = async () => {
+  try {
+    // 构建第一个人的性格描述
+    const person1Description = [
+      person1Type.value,
+      ...(person1OtherTypes.value || []),
+      person1CustomType.value
+    ].filter(Boolean).join('，');
+
+    // 构建第二个人的性格描述
+    const person2Description = [
+      person2Type.value,
+      ...(person2OtherTypes.value || []),
+      person2CustomType.value
+    ].filter(Boolean).join('，');
+    console.log('前端开始请求性格匹配分析接口');
+    // 调用后端接口
+    const response = await axios.post('/api/personality-match', {
+      personality1: person1Description,
+      personality2: person2Description
+    });
+    console.log('后端返回结果', response.data);
+
+    // 处理返回的数据
+    const cleanResponse = removeJsonMarkers(response.data);
+    const result = JSON.parse(cleanResponse);
+
+    // 更新匹配度和分析结果
+    matchPercentage.value = result.matchPercentage;
+    analysisResult.value = result.analysis;
+
+  } catch (error) {
+    console.error('性格匹配分析失败:', error);
+    ElMessage.error('性格匹配分析失败，请稍后重试');
+    // 设置默认值
+    matchPercentage.value = 0;
+    analysisResult.value = '请求失败，请稍后重试';
+  }
 }
 
 // 初始化数据
@@ -171,7 +209,7 @@ const initializeData = () => {
   const p1CustomType = localStorage.getItem('person1CustomType')
   
   person1Type.value = p1Type || ''
-  person1OtherTypes.value = p1OtherTypes ? JSON.parse(p1OtherTypes) : []
+  person1OtherTypes.value = p1OtherTypes ? JSON.parse(p1OtherTypes).map(translatePersonalityType) : []
   person1CustomType.value = p1CustomType || ''
 
   // 读取第二个人的数据
@@ -180,9 +218,10 @@ const initializeData = () => {
   const p2CustomType = localStorage.getItem('person2CustomType')
   
   person2Type.value = p2Type || ''
-  person2OtherTypes.value = p2OtherTypes ? JSON.parse(p2OtherTypes) : []
+  person2OtherTypes.value = p2OtherTypes ? JSON.parse(p2OtherTypes).map(translatePersonalityType) : []
   person2CustomType.value = p2CustomType || ''
 
+  //将两人类型转换为中文
   // 计算匹配度
   calculateMatch()
 }
