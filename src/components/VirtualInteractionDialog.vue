@@ -41,9 +41,9 @@
                   {{ message.type === 'user' ? '你' : getAIPersonalityName() }}
                 </span>
                
-                <span v-if="message.type === 'ai'" class="text-xs opacity-50">
+                <!-- <span v-if="message.type === 'ai'" class="text-xs opacity-50">
                  {{ getAIPersonalityDescription() }}
-                </span>
+                </span> -->
               </div>
               <div class="text-base leading-relaxed">
                 {{ message.content }}
@@ -122,7 +122,7 @@ const getAIPersonalityShort = () => {
 const getAIPersonalityName = () => {
   const person2Type = localStorage.getItem('person2Type') || ''
   const person2CustomType = localStorage.getItem('person2CustomType') || ''
-  return person2CustomType || `${person2Type}型助手` || 'AI助手'
+  return  'AI助手'
 }
 
 // 获取AI性格描述（用于消息头部）

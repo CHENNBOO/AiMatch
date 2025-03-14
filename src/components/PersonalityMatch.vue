@@ -665,7 +665,7 @@ const commonTypes = [
 const otherTypes = ref(
   Object.entries(typeTranslations).map(([id, name]) => ({
     id,
-    name: `${name} (${id})`
+    name: `${name}`
   }))
 )
 

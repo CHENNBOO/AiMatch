@@ -3,7 +3,7 @@
     <PersonalitySettingsDialog v-model="showDialog" />
     <PersonalityAnalysisDialog v-model="showAnalysisDialog" />
     <PersonalityIncompleteDialog v-model="showIncompleteDialog" />
-    <VirtualInteractionDialog v-model="showVirtualInteractionDialog" />
+    <VirtualInteractionDialog v-if="showVirtualInteractionDialog" v-model="showVirtualInteractionDialog" />
     <!-- 背景装饰 -->
     <div class="fixed inset-0 overflow-hidden pointer-events-none">
       <div class="absolute -top-1/2 -left-1/2 w-full h-full bg-gradient-to-br from-blue-500/10 to-purple-500/10 rounded-full blur-3xl"></div>
