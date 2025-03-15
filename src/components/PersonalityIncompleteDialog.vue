@@ -15,6 +15,15 @@
     </template>
     
     <div class="py-6 px-4">
+      <el-carousel height="400px" class="mb-6 w-full">
+        <el-carousel-item>
+          <img src="../../img/3.png" alt="性格类型图片1" class="w-full h-full object-contain">
+        </el-carousel-item>
+        <el-carousel-item>
+          <img src="../../img/5.png" alt="性格类型图片2" class="w-full h-full object-contain">
+        </el-carousel-item>
+      </el-carousel>
+
       <div class="flex items-center justify-center space-x-4 mb-6">
         <el-icon class="text-4xl text-blue-500"><Warning /></el-icon>
         <span class="text-lg text-black dark:text-white">请先完成双方的性格类型设置</span>
