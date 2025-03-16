@@ -85,7 +85,7 @@
 import { ref, computed, nextTick, watch, onMounted } from 'vue'
 import { Promotion, Avatar, UserFilled } from '@element-plus/icons-vue'
 import { ElMessage } from 'element-plus'
-import axios from 'axios'
+import { personalityApi } from '../utils/personalityApi'
 import { checkForbiddenWords, getForbiddenWordType } from '../config/forbiddenWords'
 import { translatePersonalityType } from '../config/personalityTypes'
 
@@ -115,15 +115,12 @@ const chatContainer = ref<HTMLElement | null>(null)
 
 // 获取AI性格简称（用于头像）
 const getAIPersonalityShort = () => {
-  const person2Type = localStorage.getItem('person2Type') || ''
-  return person2Type.substring(0, 2) || 'AI'
+  return 'AI'
 }
 
 // 获取AI性格名称
 const getAIPersonalityName = () => {
-  const person2Type = localStorage.getItem('person2Type') || ''
-  const person2CustomType = localStorage.getItem('person2CustomType') || ''
-  return  'AI助手'
+  return 'AI助手'
 }
 
 // 获取AI性格描述（用于消息头部）
@@ -145,9 +142,9 @@ const getPersonalityDescription = () => {
   const person2OtherTypes = JSON.parse(localStorage.getItem('person2OtherTypes') || '[]')
   const person2CustomType = localStorage.getItem('person2CustomType') || ''
   
-  let personality = `MBTI类型：${person2Type}`
+  let personality = person2Type
   if (person2OtherTypes.length > 0) {
-    personality += `\n其他特征：${person2OtherTypes.map(type => translatePersonalityType(type)).join('、')}`
+    personality += `\n其他特征：${person2OtherTypes.map((type: string) => translatePersonalityType(type)).join('、')}`
   }
   if (person2CustomType) {
     personality += `\n自定义特征：${person2CustomType}`
@@ -166,14 +163,16 @@ const sendMessage = async () => {
   // 检查违禁词
   if (checkForbiddenWords(userMessage)) {
     const types = getForbiddenWordType(userMessage)
-    const typeMessages = {
+    type ForbiddenWordType = '色情' | '政治' | '代码' | '敏感';
+    
+    const typeMessages: Record<ForbiddenWordType, string> = {
       '色情': '请保持健康的交流环境',
       '政治': '请避免讨论敏感话题',
       '代码': '请专注于性格匹配相关的交流',
       '敏感': '请避免讨论敏感话题'
     }
     
-    const warningMessage = types.map(type => typeMessages[type]).join('，')
+    const warningMessage = types.map((type) => typeMessages[type as ForbiddenWordType]).join('，')
     ElMessage({
       message: `消息包含${types.join('、')}相关违禁词。${warningMessage}`,
       type: 'warning',
@@ -188,15 +187,15 @@ const sendMessage = async () => {
   isLoading.value = true
 
   try {
-    const personality = getPersonalityDescription()
-    const response = await axios.post('/api/virtual-interaction', {
+    const personality = localStorage.getItem('personalityText2') || ''
+    const response = await personalityApi.virtualInteraction({
       message: userMessage,
       personality: personality
     })
     
     // 检查AI回复是否包含违禁词
-    if (checkForbiddenWords(response.data.reply)) {
-      const types = getForbiddenWordType(response.data.reply)
+    if (checkForbiddenWords(response.reply)) {
+      const types = getForbiddenWordType(response.reply)
       ElMessage({
         message: `AI回复包含${types.join('、')}相关违禁词，已自动过滤`,
         type: 'warning',
@@ -205,7 +204,7 @@ const sendMessage = async () => {
       })
       messages.value.push({ type: 'ai', content: '抱歉，我的回复可能包含不当内容，请重新提问。' })
     } else {
-      messages.value.push({ type: 'ai', content: response.data.reply })
+      messages.value.push({ type: 'ai', content: response.reply })
     }
   } catch (error) {
     console.error('发送消息失败:', error)
@@ -218,13 +217,13 @@ const sendMessage = async () => {
 // 组件挂载时初始化AI欢迎语
 onMounted(async () => {
   try {
-    const personality = getPersonalityDescription()
-    const response = await axios.post('/api/virtual-interaction', {
+    const personality = localStorage.getItem('personalityText2') || ''
+    const response = await personalityApi.virtualInteraction({
       message: '你好，请介绍一下你自己',
       personality: personality
     })
     
-    messages.value[0].content = response.data.reply
+    messages.value[0].content = response.reply
   } catch (error) {
     console.error('初始化AI欢迎语失败:', error)
     ElMessage.error('初始化失败，请刷新页面重试')

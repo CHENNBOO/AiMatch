@@ -278,6 +278,10 @@ const resetSelection = async () => {
     person1.value.otherTypes = []
     person2.value.otherTypes = []
 
+    // 清除localStorage中的数据
+    localStorage.removeItem('personalityText1')
+    localStorage.removeItem('personalityText2')
+
     ElMessage.success('性格档案已重置')
   } catch (error) {
     console.error('重置失败:', error)
@@ -298,17 +302,23 @@ const loadProfileData = async () => {
     // 获取性格匹配数据
     const response = await personalityApi.getMatchResult(Number(userId))
     
-    // 设置文本框的值
-    customType1.value = response.personalityText1 || ''
-    customType2.value = response.personalityText2 || ''
+    // 优先使用API返回的数据
+    customType1.value = response.personalityText1 || localStorage.getItem('personalityText1') || ''
+    customType2.value = response.personalityText2 || localStorage.getItem('personalityText2') || ''
     
     // 设置person对象的值
-    person1.value.customType = response.personalityText1 || ''
-    person2.value.customType = response.personalityText2 || ''
+    person1.value.customType = customType1.value
+    person2.value.customType = customType2.value
 
   } catch (error) {
     console.error('获取性格匹配数据失败:', error)
     ElMessage.error('获取性格匹配数据失败')
+    
+    // API请求失败时，从localStorage读取数据
+    customType1.value = localStorage.getItem('personalityText1') || ''
+    customType2.value = localStorage.getItem('personalityText2') || ''
+    person1.value.customType = customType1.value
+    person2.value.customType = customType2.value
   }
 }
 
@@ -335,6 +345,10 @@ const saveProfile = async () => {
       personalityText1: customType1.value,
       personalityText2: customType2.value
     })
+
+    // 将性格文本保存到 localStorage
+    localStorage.setItem('personalityText1', customType1.value)
+    localStorage.setItem('personalityText2', customType2.value)
 
     ElMessage.success('性格档案保存成功')
     emit('update:modelValue', false)
