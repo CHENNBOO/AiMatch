@@ -39,7 +39,9 @@
             <div class="flex space-x-3">
               <el-input
                 v-model="customType1"
-                placeholder="输入自定义类型..."
+                type="textarea"
+                :rows="3"
+                placeholder="输入性格类型..."
                 class="!bg-white/60 dark:!bg-gray-700/60 !rounded-xl"
                 @keyup.enter="applyCustomType(1)"
               >
@@ -89,7 +91,9 @@
             <div class="flex space-x-3">
               <el-input
                 v-model="customType2"
-                placeholder="输入自定义类型..."
+                type="textarea"
+                :rows="3"
+                placeholder="输入性格类型..."
                 class="!bg-white/60 dark:!bg-gray-700/60 !rounded-xl"
                 @keyup.enter="applyCustomType(2)"
               >
@@ -140,115 +144,6 @@
           <el-icon class="text-lg"><Check /></el-icon>
           <span class="text-base">设置完成</span>
         </el-button>
-      </div>
-
-      <!-- 结果展示区 -->
-      <div v-if="showResult" class="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-        <div class="bg-white dark:bg-gray-800 rounded-3xl shadow-2xl max-w-4xl w-full max-h-[90vh] overflow-y-auto">
-          <div class="sticky top-0 bg-white dark:bg-gray-800 p-4 border-b border-gray-200 dark:border-gray-700 flex justify-between items-center">
-            <h2 class="text-2xl font-bold text-black dark:text-white">匹配分析报告</h2>
-            <el-button circle @click="closeResult">
-              <el-icon><Close /></el-icon>
-            </el-button>
-          </div>
-          
-          <div class="p-8">
-            <!-- 结果头部 -->
-            <div class="text-center mb-8">
-              <div class="flex items-center justify-center space-x-8">
-                <div class="text-center">
-                  <div class="text-sm text-black/70 dark:text-white/70 mb-2">您的类型</div>
-                  <div class="text-2xl font-bold text-blue-500">{{ getFullType(person1) }}</div>
-                  <div class="mt-2 text-sm text-black/50 dark:text-white/50">{{ getTypeDescription(person1) }}</div>
-                </div>
-                <div class="relative">
-                  <el-progress
-                    type="dashboard"
-                    :percentage="matchPercentage"
-                    :stroke-width="12"
-                    :width="180"
-                    :format="(percentage: number) => `${percentage}%`"
-                    class="animate__animated animate__zoomIn"
-                  />
-                  <div class="mt-2 text-sm text-black/70 dark:text-white/70">匹配度</div>
-                </div>
-                <div class="text-center">
-                  <div class="text-sm text-black/70 dark:text-white/70 mb-2">对方类型</div>
-                  <div class="text-2xl font-bold text-blue-500">{{ getFullType(person2) }}</div>
-                  <div class="mt-2 text-sm text-black/50 dark:text-white/50">{{ getTypeDescription(person2) }}</div>
-                </div>
-              </div>
-            </div>
-
-            <!-- 分析内容 -->
-            <div class="space-y-6">
-              <div v-if="parsedDescription.overall" class="bg-gray-50 dark:bg-gray-700/50 rounded-2xl p-6 animate__animated animate__fadeIn">
-                <h3 class="text-xl font-semibold text-black dark:text-white mb-4 flex items-center">
-                  <el-icon class="mr-2"><InfoFilled /></el-icon>
-                  总体评价
-                </h3>
-                <p class="text-black/70 dark:text-white/70 leading-relaxed">{{ parsedDescription.overall }}</p>
-              </div>
-
-              <div v-if="parsedDescription.communication" class="bg-gray-50 dark:bg-gray-700/50 rounded-2xl p-6 animate__animated animate__fadeIn animate__delay-1s">
-                <h3 class="text-xl font-semibold text-black dark:text-white mb-4 flex items-center">
-                  <el-icon class="mr-2"><ChatDotRound /></el-icon>
-                  沟通方式
-                </h3>
-                <p class="text-black/70 dark:text-white/70 leading-relaxed">{{ parsedDescription.communication }}</p>
-              </div>
-
-              <div v-if="parsedDescription.values" class="bg-gray-50 dark:bg-gray-700/50 rounded-2xl p-6 animate__animated animate__fadeIn animate__delay-2s">
-                <h3 class="text-xl font-semibold text-black dark:text-white mb-4 flex items-center">
-                  <el-icon class="mr-2"><Connection /></el-icon>
-                  共同价值观
-                </h3>
-                <p class="text-black/70 dark:text-white/70 leading-relaxed">{{ parsedDescription.values }}</p>
-              </div>
-
-              <div v-if="parsedDescription.challenges?.length" class="bg-gray-50 dark:bg-gray-700/50 rounded-2xl p-6 animate__animated animate__fadeIn animate__delay-3s">
-                <h3 class="text-xl font-semibold text-black dark:text-white mb-4 flex items-center">
-                  <el-icon class="mr-2"><Warning /></el-icon>
-                  可能存在的挑战
-                </h3>
-                <ul class="space-y-3">
-                  <li v-for="(challenge, index) in parsedDescription.challenges" :key="index"
-                    class="flex items-start text-black/70 dark:text-white/70">
-                    <span class="text-blue-500 mr-2">•</span>
-                    {{ challenge }}
-                  </li>
-                </ul>
-              </div>
-
-              <div v-if="parsedDescription.suggestions?.length" class="bg-gray-50 dark:bg-gray-700/50 rounded-2xl p-6 animate__animated animate__fadeIn animate__delay-4s">
-                <h3 class="text-xl font-semibold text-black dark:text-white mb-4 flex items-center">
-                  <el-icon class="mr-2"><Sunny /></el-icon>
-                  改善建议
-                </h3>
-                <ul class="space-y-3">
-                  <li v-for="(suggestion, index) in parsedDescription.suggestions" :key="index"
-                    class="flex items-start text-black/70 dark:text-white/70">
-                    <span class="text-blue-500 mr-2">{{ index + 1 }}.</span>
-                    {{ suggestion }}
-                  </li>
-                </ul>
-              </div>
-            </div>
-
-            <!-- 操作按钮 -->
-            <div class="flex justify-center space-x-4 mt-8">
-              <el-button type="primary" @click="resetSelection">
-                重新匹配
-              </el-button>
-              <el-button @click="exportReport">
-                导出报告
-              </el-button>
-              <el-button @click="shareResult">
-                分享结果
-              </el-button>
-            </div>
-          </div>
-        </div>
       </div>
 
       <!-- 功能选择弹框 -->
@@ -330,11 +225,6 @@ import { ref, computed, onMounted } from 'vue'
 import axios from 'axios'
 import { ElLoading, ElMessage } from 'element-plus'
 import { 
-  InfoFilled, 
-  ChatDotRound, 
-  Connection, 
-  Warning, 
-  Sunny, 
   Back,
   Close,
   Plus,
@@ -378,15 +268,6 @@ const person2 = ref<PersonType>({
   otherTypes: [],
   customType: ''
 })
-const showResult = ref(false)
-const matchPercentage = ref(0)
-const parsedDescription = ref({
-  overall: '',
-  communication: '',
-  values: '',
-  challenges: [] as string[],
-  suggestions: [] as string[]
-})
 const customType1 = ref('')
 const customType2 = ref('')
 const showFunctionDialog = ref(false)
@@ -409,14 +290,30 @@ const toggleOtherType = (person: number, type: string) => {
   if (person === 1) {
     if (person1.value.otherTypes.includes(type)) {
       person1.value.otherTypes = person1.value.otherTypes.filter(t => t !== type)
+      // 更新输入框内容，用顿号分隔所有选中的类型
+      customType1.value = person1.value.otherTypes.map(t => typeTranslations[t]).join('、')
     } else {
       person1.value.otherTypes.push(type)
+      // 如果输入框为空，直接设置；否则追加
+      if (!customType1.value.trim()) {
+        customType1.value = person1.value.otherTypes.map(t => typeTranslations[t]).join('、')
+      } else {
+        customType1.value = customType1.value + '、' + typeTranslations[type]
+      }
     }
   } else {
     if (person2.value.otherTypes.includes(type)) {
       person2.value.otherTypes = person2.value.otherTypes.filter(t => t !== type)
+      // 更新输入框内容，用顿号分隔所有选中的类型
+      customType2.value = person2.value.otherTypes.map(t => typeTranslations[t]).join('、')
     } else {
       person2.value.otherTypes.push(type)
+      // 如果输入框为空，直接设置；否则追加
+      if (!customType2.value.trim()) {
+        customType2.value = person2.value.otherTypes.map(t => typeTranslations[t]).join('、')
+      } else {
+        customType2.value = customType2.value + '、' + typeTranslations[type]
+      }
     }
   }
 }
@@ -463,15 +360,6 @@ const resetSelection = async () => {
       otherTypes: [],
       customType: ''
     }
-    showResult.value = false
-    matchPercentage.value = 0
-    parsedDescription.value = {
-      overall: '',
-      communication: '',
-      values: '',
-      challenges: [],
-      suggestions: []
-    }
     customType1.value = ''
     customType2.value = ''
 
@@ -487,18 +375,6 @@ const resetSelection = async () => {
     console.error('重置性格匹配数据失败：', error)
     ElMessage.error('重置性格匹配数据失败，请重试')
   }
-}
-
-const closeResult = () => {
-  showResult.value = false
-}
-
-const exportReport = () => {
-  ElMessage.success('报告已导出')
-}
-
-const shareResult = () => {
-  ElMessage.success('分享链接已复制到剪贴板')
 }
 
 const applyCustomType = (person: number) => {
@@ -571,16 +447,15 @@ const saveAndRedirect = async () => {
       return
     }
 
-    // 构建性格描述文本
-    const getPersonalityText = (person: PersonType) => {
-      if (person.customType) {
-        return person.customType
-      }
-      return person.otherTypes.map(type => typeTranslations[type]).join('、')
-    }
+    // 获取DIY类型文本框的值
+    const personalityText1 = customType1.value.trim()
+    const personalityText2 = customType2.value.trim()
 
-    const personalityText1 = getPersonalityText(person1.value)
-    const personalityText2 = getPersonalityText(person2.value)
+    // 检查是否为空
+    if (!personalityText1 || !personalityText2) {
+      ElMessage.warning('请填写双方的性格类型')
+      return
+    }
 
     // 调用API保存性格匹配数据
     await personalityApi.createInitialMatch({
@@ -589,17 +464,9 @@ const saveAndRedirect = async () => {
       personalityText2
     })
 
-    // 保存第一个人的类型
-    localStorage.setItem('person1OtherTypes', JSON.stringify(person1.value.otherTypes))
-    if (person1.value.customType) {
-      localStorage.setItem('person1CustomType', person1.value.customType)
-    }
-
-    // 保存第二个人的类型
-    localStorage.setItem('person2OtherTypes', JSON.stringify(person2.value.otherTypes))
-    if (person2.value.customType) {
-      localStorage.setItem('person2CustomType', person2.value.customType)
-    }
+    // 只保存DIY类型到localStorage
+    localStorage.setItem('person1CustomType', personalityText1)
+    localStorage.setItem('person2CustomType', personalityText2)
 
     ElMessage.success('性格匹配数据保存成功')
     
@@ -618,27 +485,15 @@ const saveAndRedirect = async () => {
 
 // 初始化函数
 const initializeFromLocalStorage = () => {
-  // 读取第一个人的设置
-  const person1OtherTypesStr = localStorage.getItem('person1OtherTypes')
+  // 读取第一个人的DIY类型设置
   const person1CustomTypeStr = localStorage.getItem('person1CustomType')
-
-  if (person1OtherTypesStr) {
-    person1.value.otherTypes = JSON.parse(person1OtherTypesStr)
-  }
-
   if (person1CustomTypeStr) {
     person1.value.customType = person1CustomTypeStr
     customType1.value = person1CustomTypeStr
   }
 
-  // 读取第二个人的设置
-  const person2OtherTypesStr = localStorage.getItem('person2OtherTypes')
+  // 读取第二个人的DIY类型设置
   const person2CustomTypeStr = localStorage.getItem('person2CustomType')
-
-  if (person2OtherTypesStr) {
-    person2.value.otherTypes = JSON.parse(person2OtherTypesStr)
-  }
-
   if (person2CustomTypeStr) {
     person2.value.customType = person2CustomTypeStr
     customType2.value = person2CustomTypeStr
