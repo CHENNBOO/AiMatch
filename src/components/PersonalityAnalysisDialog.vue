@@ -230,7 +230,7 @@ watch(() => props.modelValue, async (newVal) => {
     // 弹框打开时获取数据
     await getMatchResult()
   }
-}, { immediate: true })
+}, { immediate: false })
 
 // 确保弹框可以正常关闭
 const handleClose = () => {

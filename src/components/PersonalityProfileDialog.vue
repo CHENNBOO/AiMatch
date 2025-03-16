@@ -153,7 +153,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed, onMounted } from 'vue'
+import { ref, computed, onMounted, watch } from 'vue'
 import { ElMessage } from 'element-plus'
 import { Check, Refresh, Delete } from '@element-plus/icons-vue'
 import { typeTranslations } from '../config/personalityTypes'
@@ -285,8 +285,8 @@ const resetSelection = async () => {
   }
 }
 
-// 在组件挂载时加载已保存的数据
-onMounted(async () => {
+// 添加加载数据的方法
+const loadProfileData = async () => {
   try {
     // 从localStorage获取用户ID
     const userId = localStorage.getItem('userId')
@@ -310,7 +310,14 @@ onMounted(async () => {
     console.error('获取性格匹配数据失败:', error)
     ElMessage.error('获取性格匹配数据失败')
   }
-})
+}
+
+// 监听对话框显示状态
+watch(() => props.modelValue, async (newVal) => {
+  if (newVal) {
+    await loadProfileData()
+  }
+}, { immediate: false })
 
 // 修改保存方法，同时保存到API和本地存储
 const saveProfile = async () => {
