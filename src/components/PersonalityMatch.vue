@@ -183,9 +183,6 @@
               </el-input>
             </div>
           </div>
-          <div class="mt-6 flex justify-end space-x-4" v-if="isFirstPersonComplete">
-            <el-button @click="clearPerson(1)" class="!text-gray-500 hover:!text-white">清空选择</el-button>
-          </div>
         </div>
 
         <!-- 右侧选择区 -->
@@ -352,9 +349,6 @@
               </el-input>
             </div>
           </div>
-          <div class="mt-6 flex justify-end space-x-4" v-if="isSecondPersonComplete">
-            <el-button @click="clearPerson(2)" class="!text-gray-500 hover:!text-white">清空选择</el-button>
-          </div>
         </div>
       </div>
 
@@ -491,7 +485,7 @@
 
       <!-- 功能选择弹框 -->
       <div v-if="showFunctionDialog" class="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center p-4 animate__animated animate__fadeIn">
-        <div class="bg-white dark:bg-gray-800 rounded-3xl shadow-2xl max-w-4xl w-full max-h-[90vh] overflow-y-auto animate__animated animate__zoomIn">
+        <div class="bg-white dark:bg-gray-800 rounded-3xl shadow-2xl max-w-4xl w-full max-h-[90vh] overflow-y-auto animate__animated animate__fadeIn">
           <div class="sticky top-0 bg-white dark:bg-gray-800 p-6 border-b border-gray-200 dark:border-gray-700 flex justify-between items-center">
             <h2 class="text-2xl font-bold bg-gradient-to-r from-blue-500 to-purple-500 bg-clip-text text-transparent">选择功能</h2>
             <el-button circle @click="closeFunctionDialog" class="hover:bg-gray-100 dark:hover:bg-gray-700 !w-10 !h-10">
@@ -665,9 +659,7 @@ const otherTypes = ref(
 )
 
 // 定义 emit
-const emit = defineEmits<{
-  (e: 'close'): void
-}>()
+const emit = defineEmits(['close'])
 
 // 状态管理
 // const currentStep = ref(1) // 移除步骤变量
@@ -889,30 +881,6 @@ const clearCustomType = (person: number) => {
 
 const closeFunctionDialog = () => {
   showFunctionDialog.value = false
-}
-
-const clearPerson = (person: number) => {
-  if (person === 1) {
-    person1.value = {
-      EI: '',
-      SN: '',
-      TF: '',
-      JP: '',
-      otherTypes: [],
-      customType: ''
-    }
-    customType1.value = ''
-  } else {
-    person2.value = {
-      EI: '',
-      SN: '',
-      TF: '',
-      JP: '',
-      otherTypes: [],
-      customType: ''
-    }
-    customType2.value = ''
-  }
 }
 
 const checkPersonalityComplete = () => {
