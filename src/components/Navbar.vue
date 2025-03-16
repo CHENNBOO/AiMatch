@@ -35,12 +35,27 @@
           <button class="p-2 text-black/75 hover:text-black transition-colors duration-300">
             <i class="ri-search-line text-xl"></i>
           </button>
-          
-          <!-- 登录按钮 -->
-          <button class="px-6 py-2.5 bg-gradient-to-r from-gray-900 to-black text-white rounded-full 
-                       hover:shadow-lg transition-shadow duration-300 text-sm tracking-wide">
-            登录
-          </button>
+
+          <!-- 用户信息和操作按钮 -->
+          <template v-if="isLoggedIn">
+            <span class="text-black/75 text-sm tracking-wide">欢迎，{{ username }}</span>
+            <button
+              @click="handleLogout"
+              class="px-6 py-2.5 bg-gradient-to-r from-red-600 to-red-700 text-white rounded-full 
+                     hover:shadow-lg transition-shadow duration-300 text-sm tracking-wide"
+            >
+              退出登录
+            </button>
+          </template>
+          <template v-else>
+            <button
+              @click="goToLogin"
+              class="px-6 py-2.5 bg-gradient-to-r from-gray-900 to-black text-white rounded-full 
+                     hover:shadow-lg transition-shadow duration-300 text-sm tracking-wide"
+            >
+              登录
+            </button>
+          </template>
         </div>
       </div>
     </div>
@@ -51,14 +66,54 @@
 </template>
 
 <script setup lang="ts">
-import { useRoute } from 'vue-router'
+import { ref, onMounted, watch } from 'vue'
+import { useRoute, useRouter } from 'vue-router'
 
 const route = useRoute()
+const router = useRouter()
+const username = ref('')
+const isLoggedIn = ref(false)
 
 const navItems = [
   { name: 'AiMatch', path: '/' },
   { name: '更多功能敬请期待', path: '/coming-soon', disabled: true }
 ]
+
+// 退出登录
+const handleLogout = async () => {
+  await router.push('/login')
+  localStorage.removeItem('token')
+  localStorage.removeItem('user')
+  isLoggedIn.value = false
+  username.value = ''
+}
+
+// 跳转到登录页
+const goToLogin = () => {
+  router.push('/login')
+}
+
+// 获取用户信息
+const getUserInfo = () => {
+  const userStr = localStorage.getItem('user')
+  if (userStr) {
+    const user = JSON.parse(userStr)
+    username.value = user.username
+    isLoggedIn.value = true
+  } else {
+    isLoggedIn.value = false
+    username.value = ''
+  }
+}
+
+// 监听路由变化
+watch(() => route.path, () => {
+  getUserInfo()
+})
+
+onMounted(() => {
+  getUserInfo()
+})
 </script>
 
 <style scoped>

@@ -5,25 +5,6 @@
     <PersonalityIncompleteDialog v-model="showIncompleteDialog" />
     <VirtualInteractionDialog v-if="showVirtualInteractionDialog" v-model="showVirtualInteractionDialog" />
     
-    <!-- 用户信息和操作按钮 -->
-    <div class="absolute top-4 right-4 flex items-center space-x-4">
-      <span class="text-black dark:text-white">欢迎，{{ username }}</span>
-      <!-- <el-button 
-        type="primary"
-        @click="goToChangePassword"
-        class="!px-4 !py-2 !text-sm !text-white !bg-blue-500 hover:!bg-blue-600 !rounded-lg !transition-colors"
-      >
-        修改密码
-      </el-button> -->
-      <el-button 
-        type="danger"
-        @click="handleLogout"
-        class="!px-4 !py-2 !text-sm !text-white !bg-red-500 hover:!bg-red-600 !rounded-lg !transition-colors"
-      >
-        退出登录
-      </el-button>
-    </div>
-
     <!-- 背景装饰 -->
     <div class="fixed inset-0 overflow-hidden pointer-events-none">
       <div class="absolute -top-1/2 -left-1/2 w-full h-full bg-gradient-to-br from-blue-500/10 to-purple-500/10 rounded-full blur-3xl"></div>
@@ -100,7 +81,6 @@ const showDialog = ref(false)
 const showAnalysisDialog = ref(false)
 const showIncompleteDialog = ref(false)
 const showVirtualInteractionDialog = ref(false)
-const username = ref('')
 
 const checkPersonalitySettings = () => {
   // 检查第一个人的设置
@@ -126,7 +106,7 @@ const checkPersonalitySettings = () => {
   return hasPerson1Settings && hasPerson2Settings
 }
 
-const handleFeatureClick = (e: MouseEvent, path: string) => {
+const handleFeatureClick = (e: Event, path: string) => {
   e.preventDefault()
   if (!checkPersonalitySettings()) {
     showIncompleteDialog.value = true
@@ -150,31 +130,8 @@ const goToPersonalitySettings = () => {
   router.push('/personality')
 }
 
-// 修改密码
-const goToChangePassword = () => {
-  console.log('点击修改密码按钮')
-  router.push('/change-password')
-}
-
-// 退出登录
-const handleLogout = () => {
-  localStorage.removeItem('token')
-  localStorage.removeItem('user')
-  router.push('/login')
-}
-
-// 获取用户信息
-const getUserInfo = () => {
-  const userStr = localStorage.getItem('user')
-  if (userStr) {
-    const user = JSON.parse(userStr)
-    username.value = user.username
-  }
-}
-
 onMounted(() => {
   checkPersonalitySettings()
-  getUserInfo()
 })
 </script>
 
