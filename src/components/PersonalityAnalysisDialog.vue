@@ -202,22 +202,24 @@ const getMatchResult = async () => {
       return
     }
     
-    // 添加延迟以模拟AI分析过程
-    await new Promise(resolve => setTimeout(resolve, 2000))
+    // 调用接口获取匹配结果
+    const result = await personalityApi.getMatchResult(parseInt(userId))
     
-    // 模拟数据
-    person1Type.value = 'INFJ'
-    person2Type.value = 'ENFP'
-    matchPercentage.value = 85
-    analysisResult.value = '基于AI分析，你们的性格类型具有很高的互补性。INFJ的深度思考与ENFP的创造力能够完美配合，形成良好的沟通与理解。建议在日常交往中，INFJ可以帮助ENFP更好地规划和组织，而ENFP则可以带给INFJ更多活力和新鲜视角。'
+    // 更新页面数据
+    if (result) {
+      person1Type.value = result.personalityText1 || ''
+      person2Type.value = result.personalityText2 || ''
+      matchPercentage.value = result.matchScore || 0
+      analysisResult.value = result.matchDescription || '暂无匹配分析结果'
+    } else {
+      analysisResult.value = '暂无匹配结果，请先完成性格测试'
+    }
     
   } catch (error) {
-    console.error('分析过程出现错误:', error)
-    ElMessage.error('分析过程出现错误，请稍后重试')
-    analysisResult.value = '分析过程出现错误，请稍后重试'
+    console.error('获取匹配结果失败:', error)
+    ElMessage.error('获取匹配结果失败，请稍后重试')
+    analysisResult.value = '获取匹配结果失败，请稍后重试'
   } finally {
-    // 添加延迟以确保动画效果完整显示
-    await new Promise(resolve => setTimeout(resolve, 1000))
     isAnalyzing.value = false
   }
 }
@@ -277,7 +279,7 @@ const handleClose = () => {
 
 /* 动画持续时间 */
 .animate__animated {
-  --animate-duration: 800ms;
+  --animate-duration: 1500ms;
 }
 
 @keyframes spin {
@@ -290,6 +292,17 @@ const handleClose = () => {
 }
 
 .animate-spin {
-  animation: spin 1s linear infinite;
+  animation: spin 2s linear infinite;
+}
+
+.animate-ping {
+  animation: ping 2s cubic-bezier(0, 0, 0.2, 1) infinite;
+}
+
+@keyframes ping {
+  75%, 100% {
+    transform: scale(2);
+    opacity: 0;
+  }
 }
 </style> 

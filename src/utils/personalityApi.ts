@@ -1,5 +1,6 @@
 import { API_CONFIG, API_PATHS } from '../config/api.config'
 import { get, post } from './request'
+import { AxiosRequestConfig } from 'axios'
 
 // 接口返回类型定义
 export interface PersonalityMatch {
@@ -50,16 +51,18 @@ export const personalityApi = {
     return post<PersonalityMatch>(
       API_CONFIG.SERVICES.BUSINESS,
       API_PATHS.BUSINESS.PERSONALITY_MATCH.INITIAL,
-      data
+      data,
+      { timeout: 60000 }
     )
   },
 
   // 获取性格匹配分析结果
-  getMatchResult: (userId: number): Promise<PersonalityMatch> => {
+  getMatchResult: (userId: number, config?: AxiosRequestConfig): Promise<PersonalityMatch> => {
     return get<PersonalityMatch>(
       API_CONFIG.SERVICES.BUSINESS,
       API_PATHS.BUSINESS.PERSONALITY_MATCH.RESULT,
-      { userId }
+      { userId },
+      { timeout: 60000, ...config }
     )
   },
 
@@ -68,7 +71,8 @@ export const personalityApi = {
     return post<VirtualInteractionResponse>(
       API_CONFIG.SERVICES.BUSINESS,
       API_PATHS.BUSINESS.VIRTUAL_INTERACTION,
-      data
+      data,
+      { timeout: 60000 }
     )
   },
 
@@ -77,7 +81,8 @@ export const personalityApi = {
     return post<PersonalityAnalysisResponse>(
       API_CONFIG.SERVICES.BUSINESS,
       API_PATHS.BUSINESS.PERSONALITY_MATCH.ANALYSIS,
-      data
+      data,
+      { timeout: 60000 }
     )
   },
 
@@ -86,7 +91,8 @@ export const personalityApi = {
     return get<PersonalityTypesResponse>(
       API_CONFIG.SERVICES.BUSINESS,
       API_PATHS.BUSINESS.PERSONALITY_MATCH.PERSONALITY_TYPES,
-      { userId }
+      { userId },
+      { timeout: 60000 }
     )
   }
 } 

@@ -85,13 +85,13 @@ const handleError = (code: number, message: string) => {
 }
 
 // 封装GET请求
-export const get = <T>(servicePath: string, url: string, params?: any): Promise<T> => {
-  return service.get<any, T>(servicePath + url, { params })
+export const get = <T>(servicePath: string, url: string, params?: any, config?: AxiosRequestConfig): Promise<T> => {
+  return service.get<any, T>(servicePath + url, { params, ...config })
 }
 
 // 封装POST请求
-export const post = <T>(servicePath: string, url: string, data?: any): Promise<T> => {
-  return service.post<any, T>(servicePath + url, data)
+export const post = <T>(servicePath: string, url: string, data?: any, config?: AxiosRequestConfig): Promise<T> => {
+  return service.post<any, T>(servicePath + url, data, config)
 }
 
 // 封装PUT请求
@@ -100,8 +100,8 @@ export const put = <T>(servicePath: string, url: string, data?: any, config?: Ax
 }
 
 // 封装DELETE请求
-export const del = <T>(servicePath: string, url: string): Promise<T> => {
-  return service.delete<any, T>(servicePath + url)
+export const del = <T>(servicePath: string, url: string, config?: AxiosRequestConfig): Promise<T> => {
+  return service.delete<any, T>(servicePath + url, config)
 }
 
 export default service 

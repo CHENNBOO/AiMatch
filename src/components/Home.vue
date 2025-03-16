@@ -100,16 +100,6 @@ const handleFeatureClick = async (e: MouseEvent, path: string) => {
       return
     }
 
-    // 获取用户性格类型
-    const response = await personalityApi.getMatchResult(Number(userId))
-    console.log('获取性格类型返回值:', response)
-    
-    // 检查两个性格值是否都存在且不为空
-    if (!response?.personalityText1 || !response?.personalityText2) {
-      showIncompleteDialog.value = true
-      return
-    }
-
     // 根据路径打开对应的对话框
     if (path === '/personality-analysis') {
       showAnalysisDialog.value = true
@@ -119,8 +109,8 @@ const handleFeatureClick = async (e: MouseEvent, path: string) => {
       router.push(path)
     }
   } catch (error) {
-    console.error('获取性格类型失败:', error)
-    ElMessage.error('获取性格类型失败，请稍后重试')
+    console.error('操作失败:', error)
+    ElMessage.error('操作失败，请稍后重试')
   }
 }
 
