@@ -24,7 +24,7 @@ service.interceptors.request.use(
     
     // 打印完整的请求信息
     console.log('Request:', {
-      url: config.baseURL + config.url,
+      url: config.url ? (config.baseURL || '') + config.url : '',
       method: config.method,
       headers: config.headers,
       data: config.data,
@@ -50,16 +50,7 @@ service.interceptors.response.use(
       headers: response.headers
     })
     
-    const { code, message, data } = response.data
-    
-    // 如果请求成功
-    if (code === 200) {
-      return response.data
-    }
-    
-    // 处理错误
-    handleError(code, message)
-    return Promise.reject(new Error(message || '请求失败'))
+    return response.data
   },
   (error) => {
     // 打印详细的错误信息
@@ -95,22 +86,22 @@ const handleError = (code: number, message: string) => {
 
 // 封装GET请求
 export const get = <T>(servicePath: string, url: string, params?: any): Promise<T> => {
-  return service.get(servicePath + url, { params }).then(res => res.data)
+  return service.get<any, T>(servicePath + url, { params })
 }
 
 // 封装POST请求
 export const post = <T>(servicePath: string, url: string, data?: any): Promise<T> => {
-  return service.post(servicePath + url, data).then(res => res.data)
+  return service.post<any, T>(servicePath + url, data)
 }
 
 // 封装PUT请求
 export const put = <T>(servicePath: string, url: string, data?: any, config?: AxiosRequestConfig): Promise<T> => {
-  return service.put(servicePath + url, data, config).then(res => res.data)
+  return service.put<any, T>(servicePath + url, data, config)
 }
 
 // 封装DELETE请求
 export const del = <T>(servicePath: string, url: string): Promise<T> => {
-  return service.delete(servicePath + url).then(res => res.data)
+  return service.delete<any, T>(servicePath + url)
 }
 
 export default service 

@@ -94,13 +94,17 @@ const handleRegister = async () => {
       formData.value
     )
     
-    console.log('注册请求成功，响应数据:', {
-      code: response.code,
-      message: response.message
-    })
+    console.log('注册请求成功，响应数据:', response)
 
     if (response.code === 200) {
-      alert('注册成功')
+      alert('注册成功！请使用账号密码登录')
+      // 清空表单数据
+      formData.value = {
+        username: '',
+        password: '',
+        phone: ''
+      }
+      // 跳转到登录页面
       router.push('/login')
     } else {
       alert(response.message || '注册失败，请稍后重试')

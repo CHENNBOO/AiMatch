@@ -8,18 +8,20 @@
     <!-- 用户信息和操作按钮 -->
     <div class="absolute top-4 right-4 flex items-center space-x-4">
       <span class="text-black dark:text-white">欢迎，{{ username }}</span>
-      <button 
+      <!-- <el-button 
+        type="primary"
         @click="goToChangePassword"
-        class="px-4 py-2 text-sm text-black dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg transition-colors"
+        class="!px-4 !py-2 !text-sm !text-white !bg-blue-500 hover:!bg-blue-600 !rounded-lg !transition-colors"
       >
         修改密码
-      </button>
-      <button 
+      </el-button> -->
+      <el-button 
+        type="danger"
         @click="handleLogout"
-        class="px-4 py-2 text-sm text-white bg-red-500 hover:bg-red-600 rounded-lg transition-colors"
+        class="!px-4 !py-2 !text-sm !text-white !bg-red-500 hover:!bg-red-600 !rounded-lg !transition-colors"
       >
         退出登录
-      </button>
+      </el-button>
     </div>
 
     <!-- 背景装饰 -->
@@ -124,7 +126,7 @@ const checkPersonalitySettings = () => {
   return hasPerson1Settings && hasPerson2Settings
 }
 
-const handleFeatureClick = (e: Event, path: string) => {
+const handleFeatureClick = (e: MouseEvent, path: string) => {
   e.preventDefault()
   if (!checkPersonalitySettings()) {
     showIncompleteDialog.value = true
@@ -148,13 +150,10 @@ const goToPersonalitySettings = () => {
   router.push('/personality')
 }
 
-// 获取用户信息
-const getUserInfo = () => {
-  const userStr = localStorage.getItem('user')
-  if (userStr) {
-    const user = JSON.parse(userStr)
-    username.value = user.username
-  }
+// 修改密码
+const goToChangePassword = () => {
+  console.log('点击修改密码按钮')
+  router.push('/change-password')
 }
 
 // 退出登录
@@ -164,9 +163,13 @@ const handleLogout = () => {
   router.push('/login')
 }
 
-// 跳转到修改密码页面
-const goToChangePassword = () => {
-  router.push('/change-password')
+// 获取用户信息
+const getUserInfo = () => {
+  const userStr = localStorage.getItem('user')
+  if (userStr) {
+    const user = JSON.parse(userStr)
+    username.value = user.username
+  }
 }
 
 onMounted(() => {
