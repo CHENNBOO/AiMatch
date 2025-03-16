@@ -83,6 +83,8 @@ const handleLogin = async () => {
       // 存储token和用户信息
       localStorage.setItem('token', response.data.token)
       localStorage.setItem('user', JSON.stringify(response.data.user))
+      // 存储用户ID
+      localStorage.setItem('userId', response.data.user.id)
       
       // 跳转到首页
       router.push('/')

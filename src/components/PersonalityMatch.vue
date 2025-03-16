@@ -771,46 +771,61 @@ const calculateMatch = () => {
   showFunctionDialog.value = true
 }
 
-const resetSelection = () => {
-  // 重置状态
-  person1.value = {
-    EI: '',
-    SN: '',
-    TF: '',
-    JP: '',
-    otherTypes: [],
-    customType: ''
-  }
-  person2.value = {
-    EI: '',
-    SN: '',
-    TF: '',
-    JP: '',
-    otherTypes: [],
-    customType: ''
-  }
-  showResult.value = false
-  matchPercentage.value = 0
-  parsedDescription.value = {
-    overall: '',
-    communication: '',
-    values: '',
-    challenges: [],
-    suggestions: []
-  }
-  customType1.value = ''
-  customType2.value = ''
+const resetSelection = async () => {
+  try {
+    // 获取用户ID
+    const userId = Number(localStorage.getItem('userId')) || 1
 
-  // 清空 localStorage 中的所有性格相关数据
-  localStorage.removeItem('person1Type')
-  localStorage.removeItem('person1OtherTypes')
-  localStorage.removeItem('person1CustomType')
-  localStorage.removeItem('person2Type')
-  localStorage.removeItem('person2OtherTypes')
-  localStorage.removeItem('person2CustomType')
+    // 调用API保存空的性格匹配数据
+    await personalityApi.createInitialMatch({
+      userId,
+      personalityText1: '',
+      personalityText2: ''
+    })
 
-  // 显示重置成功提示
-  ElMessage.success('性格设置已重置')
+    // 重置状态
+    person1.value = {
+      EI: '',
+      SN: '',
+      TF: '',
+      JP: '',
+      otherTypes: [],
+      customType: ''
+    }
+    person2.value = {
+      EI: '',
+      SN: '',
+      TF: '',
+      JP: '',
+      otherTypes: [],
+      customType: ''
+    }
+    showResult.value = false
+    matchPercentage.value = 0
+    parsedDescription.value = {
+      overall: '',
+      communication: '',
+      values: '',
+      challenges: [],
+      suggestions: []
+    }
+    customType1.value = ''
+    customType2.value = ''
+
+    // 清空 localStorage 中的所有性格相关数据
+    localStorage.removeItem('person1Type')
+    localStorage.removeItem('person1OtherTypes')
+    localStorage.removeItem('person1CustomType')
+    localStorage.removeItem('person2Type')
+    localStorage.removeItem('person2OtherTypes')
+    localStorage.removeItem('person2CustomType')
+
+    // 显示重置成功提示
+    ElMessage.success('性格设置已重置')
+  } catch (error) {
+    console.error('重置性格匹配数据失败：', error)
+    ElMessage.error('重置性格匹配数据失败，请重试')
+  }
 }
 
 const closeResult = () => {
