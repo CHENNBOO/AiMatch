@@ -5,6 +5,7 @@
     :show-close="false"
     center
     class="personality-incomplete-dialog"
+    width="400px"
   >
     <template #header>
       <div class="flex items-center justify-center w-full pb-2">
@@ -15,22 +16,12 @@
     </template>
     
     <div class="py-6 px-4">
-      <el-carousel height="400px" class="mb-6 w-full">
-        <el-carousel-item>
-          <img src="../../img/3.png" alt="性格类型图片1" class="w-full h-full object-contain">
-        </el-carousel-item>
-        <el-carousel-item>
-          <img src="../../img/5.png" alt="性格类型图片2" class="w-full h-full object-contain">
-        </el-carousel-item>
-      </el-carousel>
-
-      <div class="flex items-center justify-center space-x-4 mb-6">
-        <el-icon class="text-4xl text-blue-500"><Warning /></el-icon>
-        <span class="text-lg text-black dark:text-white">请先完成双方的性格类型设置</span>
-      </div>
-      
-      <div class="text-sm text-black/60 dark:text-white/60 text-center">
-        完成性格类型设置后，即可开启互动场景
+      <div class="flex flex-col items-center justify-center space-y-4 mb-6">
+        <el-icon class="text-5xl text-blue-500"><Warning /></el-icon>
+        <span class="text-lg text-black dark:text-white text-center">请先完善性格档案</span>
+        <div class="text-sm text-black/60 dark:text-white/60 text-center">
+          完善性格档案后，即可开启互动场景
+        </div>
       </div>
     </div>
 
@@ -60,24 +51,9 @@ defineEmits<{
 }>()
 </script>
 
-<style>
+<style scoped>
 .personality-incomplete-dialog {
-  @apply backdrop-blur-xl;
-}
-
-.personality-incomplete-dialog .el-dialog {
-  @apply !bg-white/90 dark:!bg-gray-800/90 !rounded-2xl !shadow-xl !max-w-lg !w-full;
-}
-
-.personality-incomplete-dialog .el-dialog__header {
-  @apply !mb-0 !pb-0 !border-b !border-gray-200 dark:!border-gray-700;
-}
-
-.personality-incomplete-dialog .el-dialog__footer {
-  @apply !border-t !border-gray-200 dark:!border-gray-700;
-}
-
-.personality-incomplete-dialog .el-button {
-  @apply !rounded-xl !h-11 !text-base !font-medium !transition-all !duration-300;
+  border-radius: 1rem;
+  overflow: hidden;
 }
 </style> 

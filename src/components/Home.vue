@@ -40,9 +40,9 @@
         </div>
 
         <!-- 性格匹配分析 -->
-        <router-link to="#" 
-          class="group relative bg-white/80 dark:bg-gray-800/80 backdrop-blur-xl rounded-2xl p-8 shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1 animate__animated animate__fadeIn animate__delay-2s"
-          @click="(e) => handleFeatureClick(e, '/personality-analysis')"
+        <div 
+          class="group relative bg-white/80 dark:bg-gray-800/80 backdrop-blur-xl rounded-2xl p-8 shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1 animate__animated animate__fadeIn animate__delay-2s cursor-pointer"
+          @click="(e: MouseEvent) => handleFeatureClick(e, '/personality-analysis')"
         >
           <div class="absolute inset-0 bg-gradient-to-br from-purple-500/0 to-purple-500/0 group-hover:from-purple-500/5 group-hover:to-purple-500/10 rounded-2xl transition-all duration-300"></div>
           <div class="relative">
@@ -50,12 +50,12 @@
             <h3 class="text-2xl font-semibold text-black dark:text-white mb-3">性格匹配分析</h3>
             <p class="text-black/70 dark:text-white/70">深入分析不同性格类型的匹配程度</p>
           </div>
-        </router-link>
+        </div>
 
         <!-- 虚拟互动 -->
-        <router-link to="#"
-          class="group relative bg-white/80 dark:bg-gray-800/80 backdrop-blur-xl rounded-2xl p-8 shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1 animate__animated animate__fadeIn animate__delay-2s"
-          @click="(e) => handleFeatureClick(e, '/virtual-interaction')"
+        <div
+          class="group relative bg-white/80 dark:bg-gray-800/80 backdrop-blur-xl rounded-2xl p-8 shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1 animate__animated animate__fadeIn animate__delay-2s cursor-pointer"
+          @click="(e: MouseEvent) => handleFeatureClick(e, '/virtual-interaction')"
         >
           <div class="absolute inset-0 bg-gradient-to-br from-pink-500/0 to-pink-500/0 group-hover:from-pink-500/5 group-hover:to-pink-500/10 rounded-2xl transition-all duration-300"></div>
           <div class="relative">
@@ -63,7 +63,7 @@
             <h3 class="text-2xl font-semibold text-black dark:text-white mb-3">虚拟互动</h3>
             <p class="text-black/70 dark:text-white/70">智能虚拟伙伴陪伴交流</p>
           </div>
-        </router-link>
+        </div>
       </div>
     </div>
   </div>
@@ -78,6 +78,8 @@ import PersonalityAnalysisDialog from './PersonalityAnalysisDialog.vue'
 import PersonalityIncompleteDialog from './PersonalityIncompleteDialog.vue'
 import VirtualInteractionDialog from './VirtualInteractionDialog.vue'
 import PersonalityProfileDialog from './PersonalityProfileDialog.vue'
+import { personalityApi } from '../utils/personalityApi'
+import { ElMessage } from 'element-plus'
 import 'animate.css'
 
 const router = useRouter()
@@ -87,35 +89,28 @@ const showIncompleteDialog = ref(false)
 const showVirtualInteractionDialog = ref(false)
 const showPersonalityProfileDialog = ref(false)
 
-const checkPersonalitySettings = () => {
-  // 检查第一个人的设置
-  const person1Type = localStorage.getItem('person1Type')
-  const person1OtherTypes = localStorage.getItem('person1OtherTypes')
-  const person1CustomType = localStorage.getItem('person1CustomType')
-  
-  // 检查第二个人的设置
-  const person2Type = localStorage.getItem('person2Type')
-  const person2OtherTypes = localStorage.getItem('person2OtherTypes')
-  const person2CustomType = localStorage.getItem('person2CustomType')
-
-  // 检查第一个人是否有任何类型设置
-  const hasPerson1Settings = person1Type || 
-    (person1OtherTypes && JSON.parse(person1OtherTypes).length > 0) || 
-    person1CustomType
-
-  // 检查第二个人是否有任何类型设置
-  const hasPerson2Settings = person2Type || 
-    (person2OtherTypes && JSON.parse(person2OtherTypes).length > 0) || 
-    person2CustomType
-
-  return hasPerson1Settings && hasPerson2Settings
-}
-
-const handleFeatureClick = (e: MouseEvent, path: string) => {
+const handleFeatureClick = async (e: MouseEvent, path: string) => {
   e.preventDefault()
-  if (!checkPersonalitySettings()) {
-    showIncompleteDialog.value = true
-  } else {
+  
+  try {
+    // 从localStorage获取用户ID
+    const userId = localStorage.getItem('userId')
+    if (!userId) {
+      ElMessage.error('未找到用户信息，请重新登录')
+      return
+    }
+
+    // 获取用户性格类型
+    const response = await personalityApi.getMatchResult(Number(userId))
+    console.log('获取性格类型返回值:', response)
+    
+    // 检查两个性格值是否都存在且不为空
+    if (!response?.personalityText1 || !response?.personalityText2) {
+      showIncompleteDialog.value = true
+      return
+    }
+
+    // 根据路径打开对应的对话框
     if (path === '/personality-analysis') {
       showAnalysisDialog.value = true
     } else if (path === '/virtual-interaction') {
@@ -123,6 +118,9 @@ const handleFeatureClick = (e: MouseEvent, path: string) => {
     } else {
       router.push(path)
     }
+  } catch (error) {
+    console.error('获取性格类型失败:', error)
+    ElMessage.error('获取性格类型失败，请稍后重试')
   }
 }
 
@@ -136,7 +134,7 @@ const goToPersonalitySettings = () => {
 }
 
 onMounted(() => {
-  checkPersonalitySettings()
+  // 移除原有的checkPersonalitySettings调用
 })
 </script>
 
