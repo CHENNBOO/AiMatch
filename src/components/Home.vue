@@ -71,7 +71,7 @@
       v-model="showPersonalityMatchDialog"
       :fullscreen="false"
       :width="'80%'"
-      :top="'5vh'"
+      :top="'10vh'"
       :show-close="true"
       class="personality-dialog"
     >
@@ -207,6 +207,6 @@ onMounted(() => {
 }
 
 :deep(.el-dialog__body) {
-  @apply max-h-[90vh] overflow-y-auto;
+  @apply max-h-[80vh] overflow-y-auto;
 }
 </style> 
