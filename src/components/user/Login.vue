@@ -23,16 +23,11 @@
             placeholder="请输入密码"
           />
         </div>
-        
-        <div>
-          <label class="block text-sm font-medium text-black mb-1">手机号</label>
-          <input 
-            v-model="formData.phone"
-            type="text"
-            class="w-full px-4 py-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-            placeholder="请输入手机号"
-          />
-        </div>
+      </div>
+
+      <!-- 错误提示区域 -->
+      <div v-if="errorMessage" class="text-red-500 text-sm text-center">
+        {{ errorMessage }}
       </div>
 
       <div class="pt-2">
@@ -60,15 +55,24 @@ import { post } from '@/utils/request'
 import { API_CONFIG, API_PATHS } from '@/config/api.config'
 
 const router = useRouter()
+const errorMessage = ref('')
 
 const formData = ref({
   username: '',
   password: '',
-  phone: ''
 })
 
 const handleLogin = async () => {
+  // 清空错误信息
+  errorMessage.value = ''
+  
   try {
+    // 表单验证
+    if (!formData.value.username || !formData.value.password) {
+      errorMessage.value = '请填写完整的登录信息'
+      return
+    }
+
     const response = await post(
       API_CONFIG.SERVICES.UAA,
       API_PATHS.UAA.LOGIN,
@@ -83,10 +87,10 @@ const handleLogin = async () => {
       // 跳转到首页
       router.push('/')
     } else {
-      alert(response.message)
+      errorMessage.value = response.message || '登录失败，请稍后重试'
     }
   } catch (error) {
-    alert(error.message || '登录失败')
+    errorMessage.value = error.message || '登录失败，请稍后重试'
   }
 }
 </script>

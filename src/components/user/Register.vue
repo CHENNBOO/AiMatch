@@ -35,6 +35,11 @@
         </div>
       </div>
 
+      <!-- 错误提示区域 -->
+      <div v-if="errorMessage" class="text-red-500 text-sm text-center">
+        {{ errorMessage }}
+      </div>
+
       <div class="pt-2">
         <button 
           @click="handleRegister"
@@ -60,6 +65,7 @@ import { post } from '@/utils/request'
 import { API_CONFIG, API_PATHS } from '@/config/api.config'
 
 const router = useRouter()
+const errorMessage = ref('')
 
 const formData = ref({
   username: '',
@@ -68,16 +74,19 @@ const formData = ref({
 })
 
 const handleRegister = async () => {
+  // 清空错误信息
+  errorMessage.value = ''
+
   // 表单验证
   if (!formData.value.username || !formData.value.password || !formData.value.phone) {
-    alert('请填写完整的注册信息')
+    errorMessage.value = '请填写完整的注册信息'
     return
   }
 
   // 手机号格式验证
   const phoneRegex = /^1[3-9]\d{9}$/
   if (!phoneRegex.test(formData.value.phone)) {
-    alert('请输入正确的手机号格式')
+    errorMessage.value = '请输入正确的手机号格式'
     return
   }
 
@@ -97,7 +106,6 @@ const handleRegister = async () => {
     console.log('注册请求成功，响应数据:', response)
 
     if (response.code === 200) {
-      alert('注册成功！请使用账号密码登录')
       // 清空表单数据
       formData.value = {
         username: '',
@@ -107,18 +115,18 @@ const handleRegister = async () => {
       // 跳转到登录页面
       router.push('/login')
     } else {
-      alert(response.message || '注册失败，请稍后重试')
+      errorMessage.value = response.message || '注册失败，请稍后重试'
     }
   } catch (error) {
     console.error('注册请求失败:', error.response?.data || error.message)
     
     // 根据错误类型显示不同的错误信息
     if (error.response?.status === 409) {
-      alert('用户名或手机号已存在')
+      errorMessage.value = '用户名或手机号已存在'
     } else if (error.response?.status === 400) {
-      alert(error.response.data.message || '请求参数错误')
+      errorMessage.value = error.response.data.message || '请求参数错误'
     } else {
-      alert(error.message || '注册失败，请稍后重试')
+      errorMessage.value = error.message || '注册失败，请稍后重试'
     }
   }
 }
