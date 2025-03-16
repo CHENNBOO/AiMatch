@@ -93,11 +93,22 @@ const handleFeatureClick = async (e: MouseEvent, path: string) => {
   e.preventDefault()
   
   try {
-    // 从localStorage获取用户ID
+    // 从localStorage获取用户ID和性格文本
     const userId = localStorage.getItem('userId')
+    const personalityText1 = localStorage.getItem('personalityText1')
+    const personalityText2 = localStorage.getItem('personalityText2')
+
     if (!userId) {
       ElMessage.error('未找到用户信息，请重新登录')
       return
+    }
+
+    // 检查性格文本是否完整
+    if (path === '/personality-analysis' || path === '/virtual-interaction') {
+      if (!personalityText1 || !personalityText2) {
+        showIncompleteDialog.value = true
+        return
+      }
     }
 
     // 根据路径打开对应的对话框
