@@ -664,6 +664,11 @@ const otherTypes = ref(
   }))
 )
 
+// 定义 emit
+const emit = defineEmits<{
+  (e: 'close'): void
+}>()
+
 // 状态管理
 // const currentStep = ref(1) // 移除步骤变量
 const person1 = ref<PersonType>({
@@ -926,8 +931,21 @@ const saveAndRedirect = async () => {
   }
 
   try {
-    // 获取用户ID（这里假设从localStorage中获取）
-    const userId = Number(localStorage.getItem('userId')) || 1
+    // 检查用户是否已登录
+    const token = localStorage.getItem('token')
+    if (!token) {
+      ElMessage.warning('请先登录后再进行性格匹配')
+      router.push('/login')
+      return
+    }
+
+    // 获取用户ID
+    const userId = Number(localStorage.getItem('userId'))
+    if (!userId) {
+      ElMessage.error('用户信息获取失败，请重新登录')
+      router.push('/login')
+      return
+    }
 
     // 构建性格描述文本
     const getPersonalityText = (person: PersonType) => {
@@ -967,11 +985,17 @@ const saveAndRedirect = async () => {
     }
 
     ElMessage.success('性格匹配数据保存成功')
-    // 跳转到首页
-    router.push('/')
+    
+    // 触发关闭事件
+    emit('close')
   } catch (error) {
     console.error('保存性格匹配数据失败：', error)
-    ElMessage.error('保存性格匹配数据失败，请重试')
+    if (axios.isAxiosError(error) && error.response?.status === 401) {
+      ElMessage.error('登录已过期，请重新登录')
+      router.push('/login')
+    } else {
+      ElMessage.error('保存性格匹配数据失败，请重试')
+    }
   }
 }
 
