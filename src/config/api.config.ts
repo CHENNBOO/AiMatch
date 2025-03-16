@@ -20,6 +20,13 @@ export const API_PATHS = {
   
   // 业务服务接口
   BUSINESS: {
-    // 在这里添加业务服务的接口路径
+    // 性格匹配相关接口
+    PERSONALITY_MATCH: {
+      INITIAL: '/api/personality-match/initial',
+      RESULT: '/api/personality-match/result',
+      ANALYSIS: '/api/personality/match'
+    },
+    // 虚拟互动接口
+    VIRTUAL_INTERACTION: '/api/virtual/interaction'
   }
 } as const 

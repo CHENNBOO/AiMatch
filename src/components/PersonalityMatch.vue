@@ -9,13 +9,7 @@
 
     <!-- 主要内容区 -->
     <div class="container mx-auto px-4 py-8 relative">
-      <!-- 返回按钮 -->
-      <router-link to="/" class="absolute left-4 top-4">
-        <el-button class="flex items-center space-x-2 !bg-white/80 dark:!bg-gray-800/80 backdrop-blur-xl shadow-lg hover:shadow-xl transition-all duration-300">
-          <el-icon><Back /></el-icon>
-          <span>返回首页</span>
-        </el-button>
-      </router-link>
+      
 
       <!-- 标题区 -->
       <div class="text-center mb-12">
@@ -411,7 +405,7 @@
                     :percentage="matchPercentage"
                     :stroke-width="12"
                     :width="180"
-                    :format="(percentage) => `${percentage}%`"
+                    :format="(percentage: number) => `${percentage}%`"
                     class="animate__animated animate__zoomIn"
                   />
                   <div class="mt-2 text-sm text-black/70 dark:text-white/70">匹配度</div>
@@ -500,8 +494,8 @@
         <div class="bg-white dark:bg-gray-800 rounded-3xl shadow-2xl max-w-4xl w-full max-h-[90vh] overflow-y-auto animate__animated animate__zoomIn">
           <div class="sticky top-0 bg-white dark:bg-gray-800 p-6 border-b border-gray-200 dark:border-gray-700 flex justify-between items-center">
             <h2 class="text-2xl font-bold bg-gradient-to-r from-blue-500 to-purple-500 bg-clip-text text-transparent">选择功能</h2>
-            <el-button circle @click="closeFunctionDialog" class="hover:bg-gray-100 dark:hover:bg-gray-700">
-              <el-icon><Close /></el-icon>
+            <el-button circle @click="closeFunctionDialog" class="hover:bg-gray-100 dark:hover:bg-gray-700 !w-10 !h-10">
+              <el-icon class="!text-xl"><Close /></el-icon>
             </el-button>
           </div>
           
@@ -594,6 +588,7 @@ import PersonalityIncompleteDialog from './PersonalityIncompleteDialog.vue'
 import { useRouter } from 'vue-router'
 import { typeTranslations } from '../config/personalityTypes'
 import { checkForbiddenWords, getForbiddenWordType } from '../config/forbiddenWords'
+import { personalityApi } from '../utils/personalityApi'
 
 // 类型定义
 interface PersonType {
@@ -909,30 +904,60 @@ const checkPersonalityComplete = () => {
 }
 
 // 保存并跳转函数
-const saveAndRedirect = () => {
+const saveAndRedirect = async () => {
   if (!isFirstPersonComplete.value || !isSecondPersonComplete.value) {
     showIncompleteDialog.value = true
     return
   }
 
-  // 保存第一个人的MBTI类型
-  const person1Type = `${person1.value.EI}${person1.value.SN}${person1.value.TF}${person1.value.JP}`
-  localStorage.setItem('person1Type', person1Type)
-  localStorage.setItem('person1OtherTypes', JSON.stringify(person1.value.otherTypes))
-  if (person1.value.customType) {
-    localStorage.setItem('person1CustomType', person1.value.customType)
-  }
+  try {
+    // 获取用户ID（这里假设从localStorage中获取）
+    const userId = Number(localStorage.getItem('userId')) || 1
 
-  // 保存第二个人的MBTI类型
-  const person2Type = `${person2.value.EI}${person2.value.SN}${person2.value.TF}${person2.value.JP}`
-  localStorage.setItem('person2Type', person2Type)
-  localStorage.setItem('person2OtherTypes', JSON.stringify(person2.value.otherTypes))
-  if (person2.value.customType) {
-    localStorage.setItem('person2CustomType', person2.value.customType)
-  }
+    // 构建性格描述文本
+    const getPersonalityText = (person: PersonType) => {
+      if (person.customType) {
+        return person.customType
+      }
+      if (person.otherTypes.length > 0) {
+        return person.otherTypes.map(type => typeTranslations[type]).join('、')
+      }
+      return `${person.EI}${person.SN}${person.TF}${person.JP}`
+    }
 
-  // 跳转到首页
-  router.push('/')
+    const personalityText1 = getPersonalityText(person1.value)
+    const personalityText2 = getPersonalityText(person2.value)
+
+    // 调用API保存性格匹配数据
+    await personalityApi.createInitialMatch({
+      userId,
+      personalityText1,
+      personalityText2
+    })
+
+    // 保存第一个人的MBTI类型
+    const person1Type = `${person1.value.EI}${person1.value.SN}${person1.value.TF}${person1.value.JP}`
+    localStorage.setItem('person1Type', person1Type)
+    localStorage.setItem('person1OtherTypes', JSON.stringify(person1.value.otherTypes))
+    if (person1.value.customType) {
+      localStorage.setItem('person1CustomType', person1.value.customType)
+    }
+
+    // 保存第二个人的MBTI类型
+    const person2Type = `${person2.value.EI}${person2.value.SN}${person2.value.TF}${person2.value.JP}`
+    localStorage.setItem('person2Type', person2Type)
+    localStorage.setItem('person2OtherTypes', JSON.stringify(person2.value.otherTypes))
+    if (person2.value.customType) {
+      localStorage.setItem('person2CustomType', person2.value.customType)
+    }
+
+    ElMessage.success('性格匹配数据保存成功')
+    // 跳转到首页
+    router.push('/')
+  } catch (error) {
+    console.error('保存性格匹配数据失败：', error)
+    ElMessage.error('保存性格匹配数据失败，请重试')
+  }
 }
 
 // 初始化函数
