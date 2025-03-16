@@ -4,6 +4,7 @@
     <PersonalityAnalysisDialog v-model="showAnalysisDialog" />
     <PersonalityIncompleteDialog v-model="showIncompleteDialog" />
     <VirtualInteractionDialog v-if="showVirtualInteractionDialog" v-model="showVirtualInteractionDialog" />
+    <PersonalityProfileDialog v-model="showPersonalityProfileDialog" />
     
     <!-- 背景装饰 -->
     <div class="fixed inset-0 overflow-hidden pointer-events-none">
@@ -25,16 +26,16 @@
 
       <!-- 功能按钮网格 -->
       <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 max-w-6xl mx-auto">
-        <!-- 性格设置 -->
+        <!-- 性格档案 -->
         <div 
           class="group relative bg-white/80 dark:bg-gray-800/80 backdrop-blur-xl rounded-2xl p-8 shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1 animate__animated animate__fadeIn animate__delay-2s cursor-pointer"
-          @click="showPersonalityMatchDialog = true"
+          @click="showPersonalityProfileDialog = true"
         >
-          <div class="absolute inset-0 bg-gradient-to-br from-blue-500/0 to-blue-500/0 group-hover:from-blue-500/5 group-hover:to-blue-500/10 rounded-2xl transition-all duration-300"></div>
+          <div class="absolute inset-0 bg-gradient-to-br from-green-500/0 to-green-500/0 group-hover:from-green-500/5 group-hover:to-green-500/10 rounded-2xl transition-all duration-300"></div>
           <div class="relative">
-            <el-icon class="text-4xl mb-4 text-black dark:text-white"><UserFilled /></el-icon>
-            <h3 class="text-2xl font-semibold text-black dark:text-white mb-3">性格设置</h3>
-            <p class="text-black/70 dark:text-white/70">设置性格类型，探索不同性格人群的互动场景</p>
+            <el-icon class="text-4xl mb-4 text-black dark:text-white"><Document /></el-icon>
+            <h3 class="text-2xl font-semibold text-black dark:text-white mb-3">性格档案</h3>
+            <p class="text-black/70 dark:text-white/70">查看和管理您的个人性格档案信息</p>
           </div>
         </div>
 
@@ -65,30 +66,18 @@
         </router-link>
       </div>
     </div>
-
-    <!-- 性格匹配弹框 -->
-    <el-dialog
-      v-model="showPersonalityMatchDialog"
-      :fullscreen="false"
-      :width="'80%'"
-      :top="'10vh'"
-      :show-close="true"
-      class="personality-dialog"
-    >
-      <PersonalityMatch @close="showPersonalityMatchDialog = false" />
-    </el-dialog>
   </div>
 </template>
 
 <script setup lang="ts">
-import { UserFilled, Avatar, Connection } from '@element-plus/icons-vue'
+import { UserFilled, Avatar, Connection, Document } from '@element-plus/icons-vue'
 import { onMounted, ref } from 'vue'
 import { useRouter } from 'vue-router'
 import PersonalitySettingsDialog from './PersonalitySettingsDialog.vue'
 import PersonalityAnalysisDialog from './PersonalityAnalysisDialog.vue'
 import PersonalityIncompleteDialog from './PersonalityIncompleteDialog.vue'
 import VirtualInteractionDialog from './VirtualInteractionDialog.vue'
-import PersonalityMatch from './PersonalityMatch.vue'
+import PersonalityProfileDialog from './PersonalityProfileDialog.vue'
 import 'animate.css'
 
 const router = useRouter()
@@ -96,7 +85,7 @@ const showDialog = ref(false)
 const showAnalysisDialog = ref(false)
 const showIncompleteDialog = ref(false)
 const showVirtualInteractionDialog = ref(false)
-const showPersonalityMatchDialog = ref(false)
+const showPersonalityProfileDialog = ref(false)
 
 const checkPersonalitySettings = () => {
   // 检查第一个人的设置

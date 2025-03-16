@@ -24,7 +24,8 @@ export const API_PATHS = {
     PERSONALITY_MATCH: {
       INITIAL: '/api/personality-match/initial',
       RESULT: '/api/personality-match/result',
-      ANALYSIS: '/api/personality/match'
+      ANALYSIS: '/api/personality/match',
+      PERSONALITY_TYPES: '/api/personality-match/personality-types'
     },
     // 虚拟互动接口
     VIRTUAL_INTERACTION: '/api/virtual/interaction'

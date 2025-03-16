@@ -22,6 +22,10 @@ export interface PersonalityAnalysisResponse {
   analysis: string
 }
 
+export interface PersonalityTypesResponse {
+  [key: string]: string
+}
+
 // 请求参数类型定义
 export interface InitialMatchRequest {
   userId: number
@@ -74,6 +78,15 @@ export const personalityApi = {
       API_CONFIG.SERVICES.BUSINESS,
       API_PATHS.BUSINESS.PERSONALITY_MATCH.ANALYSIS,
       data
+    )
+  },
+
+  // 获取用户的性格类型
+  getPersonalityTypes: (userId: number): Promise<PersonalityTypesResponse> => {
+    return get<PersonalityTypesResponse>(
+      API_CONFIG.SERVICES.BUSINESS,
+      API_PATHS.BUSINESS.PERSONALITY_MATCH.PERSONALITY_TYPES,
+      { userId }
     )
   }
 } 
