@@ -1,6 +1,11 @@
+// 从环境变量获取基础配置
+const BASE_URL = import.meta.env.VITE_API_BASE_URL
+const TIMEOUT = import.meta.env.VITE_API_TIMEOUT
+
 export const API_CONFIG = {
   // 网关基础地址
-  BASE_URL: 'http://localhost:9000',
+  BASE_URL,
+  TIMEOUT,
   
   // 服务别名
   SERVICES: {

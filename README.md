@@ -6,8 +6,6 @@ http://117.72.43.183/
 
 AiMatch 是一个创新的性格匹配分析系统，它结合了人工智能，为用户提供专业的性格匹配分析服务。系统通过直观的界面让用户选择性格类型，并利用 AI 大模型进行深度分析，给出详细的匹配报告。除了性格匹配分析外，系统还提供了独特的虚拟聊天功能，让用户能够与不同性格类型的AI角色进行对话交流，帮助用户更深入地理解不同性格特征的思维方式和沟通模式。
 
-
-
 ## 核心功能
 
 - 📊 性格类型选择与展示
@@ -33,7 +31,6 @@ AiMatch 是一个创新的性格匹配分析系统，它结合了人工智能，
 - Tailwind CSS - 实用优先的 CSS 框架
 
 ### 后端
-- Express.js - Node.js Web 应用框架
 - Deepseek API - AI 分析引擎
 
 ## 系统要求
@@ -54,43 +51,21 @@ cd AiMatch
 ```bash
 # 安装前端依赖
 npm install
-
-# 安装后端依赖
-cd server
-npm install
-cd ..
 ```
 
 ### 3. 环境配置
 ```bash
-# 配置后端环境变量
-cp server/.env.example server/.env
+# 配置环境变量
+cp .env.example .env
 ```
-在 `server/.env` 文件中配置以下信息：
-- DEEPSEEK_API_KEY：你的 Deepseek API 密钥
+在 `.env` 文件中配置以下信息：
+- VITE_API_BASE_URL：API服务器地址
 
 ### 4. 启动服务
-
 ```bash
-# 终端 1：启动后端服务
-# 清理可能存在的 Node.js 进程
-taskkill /F /IM node.exe
-cd server
-npm run dev
-
-# 终端 2：启动前端服务
-cd ..
 npm run dev
 ```
 
-服务启动后：
-- 前端服务：http://localhost:5173
-- 后端服务：http://localhost:3000
 
-## 使用指南
 
-1. 访问系统主页 http://localhost:5173
-2. 在左右两侧面板分别选择两个人的 MBTI 性格类型
-3. 点击"开始匹配"按钮
-4. 等待 AI 分析完成，查看详细的匹配报告
 

@@ -15,18 +15,18 @@ export default defineConfig(({ mode }) => {
     server: {
       host: '0.0.0.0',
       port: 5173,
-      proxy: {
+      proxy: mode === 'development' ? {
         '^/uaa/.*': {
-          target: 'http://localhost:9000',
+          target: env.VITE_API_BASE_URL,
           changeOrigin: true,
           secure: false
         },
         '^/business/.*': {
-          target: 'http://localhost:9000',
+          target: env.VITE_API_BASE_URL,
           changeOrigin: true,
           secure: false
         }
-      }
+      } : undefined
     }
   }
 })
