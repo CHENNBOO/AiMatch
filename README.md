@@ -1,6 +1,6 @@
 # AiMatch - MBTI 性格匹配系统
 #系统访问地址
-http://117.72.43.183/
+http://1.15.33.197/
 
 ## 项目简介
 
@@ -21,50 +21,12 @@ AiMatch 是一个创新的性格匹配分析系统，它结合了人工智能，
 ![系统界面预览](img/2.png)
 ![系统界面预览](img/3.png)
 ![系统界面预览](img/4.png)
-![系统界面预览](img/5.png)
 
 ## 技术栈
-
-### 前端
 - Vue 3 - 渐进式 JavaScript 框架
 - Vite - 下一代前端构建工具
 - Tailwind CSS - 实用优先的 CSS 框架
 
-### 后端
-- Deepseek API - AI 分析引擎
-
-## 系统要求
-
-- Node.js >= 14
-- npm >= 6
-- 现代浏览器（Chrome、Firefox、Safari、Edge 等）
-
-## 快速开始
-
-### 1. 克隆项目
-```bash
-git clone https://gitee.com/CHENNBOO/AiMatch
-cd AiMatch
-```
-
-### 2. 安装依赖
-```bash
-# 安装前端依赖
-npm install
-```
-
-### 3. 环境配置
-```bash
-# 配置环境变量
-cp .env.example .env
-```
-在 `.env` 文件中配置以下信息：
-- VITE_API_BASE_URL：API服务器地址
-
-### 4. 启动服务
-```bash
-npm run dev
-```
 
 
 
