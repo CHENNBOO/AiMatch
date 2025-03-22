@@ -37,6 +37,7 @@ export interface InitialMatchRequest {
 export interface VirtualInteractionRequest {
   message: string
   personality: string
+  userId: string
 }
 
 export interface PersonalityAnalysisRequest {

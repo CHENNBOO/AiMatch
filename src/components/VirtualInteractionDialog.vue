@@ -188,9 +188,15 @@ const sendMessage = async () => {
 
   try {
     const personality = localStorage.getItem('personalityText2') || ''
+    const userId = localStorage.getItem('userId')
+    if (!userId) {
+      ElMessage.error('未找到用户信息，请重新登录')
+      return
+    }
     const response = await personalityApi.virtualInteraction({
       message: userMessage,
-      personality: personality
+      personality: personality,
+      userId: userId
     })
     
     messages.value.push({ type: 'ai', content: response.reply })
@@ -206,9 +212,15 @@ const sendMessage = async () => {
 onMounted(async () => {
   try {
     const personality = localStorage.getItem('personalityText2') || ''
+    const userId = localStorage.getItem('userId')
+    if (!userId) {
+      ElMessage.error('未找到用户信息，请重新登录')
+      return
+    }
     const response = await personalityApi.virtualInteraction({
       message: '你好，请介绍一下你自己',
-      personality: personality
+      personality: personality,
+      userId: userId
     })
     
     messages.value[0].content = response.reply
