@@ -193,19 +193,7 @@ const sendMessage = async () => {
       personality: personality
     })
     
-    // 检查AI回复是否包含违禁词
-    if (checkForbiddenWords(response.reply)) {
-      const types = getForbiddenWordType(response.reply)
-      ElMessage({
-        message: `AI回复包含${types.join('、')}相关违禁词，已自动过滤`,
-        type: 'warning',
-        duration: 3000,
-        showClose: true
-      })
-      messages.value.push({ type: 'ai', content: '抱歉，我的回复可能包含不当内容，请重新提问。' })
-    } else {
-      messages.value.push({ type: 'ai', content: response.reply })
-    }
+    messages.value.push({ type: 'ai', content: response.reply })
   } catch (error) {
     console.error('发送消息失败:', error)
     ElMessage.error('发送消息失败，请稍后重试')
