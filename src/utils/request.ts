@@ -1,6 +1,6 @@
 import axios, { AxiosInstance, AxiosRequestConfig, AxiosResponse } from 'axios'
 import { API_CONFIG } from '../config/api.config'
-import { useRouter } from 'vue-router'
+import router from '../router'  // 直接导入router实例
 
 // 创建axios实例
 const service: AxiosInstance = axios.create({
@@ -54,6 +54,7 @@ service.interceptors.response.use(
   },
   (error) => {
     // 打印详细的错误信息
+    console.error('即将打印错误信息')
     console.error('Response Error:', {
       status: error.response?.status,
       statusText: error.response?.statusText,
@@ -64,6 +65,8 @@ service.interceptors.response.use(
     // 处理HTTP错误
     if (error.response) {
       const { status, data } = error.response
+      console.log('status', status)
+      console.log('data.message', data.message)
       handleError(status, data.message)
     }
     return Promise.reject(error)
@@ -72,16 +75,20 @@ service.interceptors.response.use(
 
 // 错误处理函数
 const handleError = (code: number, message: string) => {
+  console.log('进入handleError')
   // 如果是401未授权，跳转到登录页
   if (code === 401) {
+    console.log('401未授权，跳转到登录页')
     localStorage.removeItem('token')
     localStorage.removeItem('user')
-    const router = useRouter()
-    router.push('/login')
+    // 使用导入的router实例进行导航
+    router.push('/login').catch(err => {
+      console.error('路由跳转失败:', err)
+    })
   }
   
   // 显示错误消息
-  console.error(message)
+  console.error('显示错误消息:'+message)
 }
 
 // 封装GET请求
